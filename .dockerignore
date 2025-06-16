@@ -1,10 +1,61 @@
-# .dockerignore
-node_modules
-npm-debug.log
-dist
-.git
-.gitignore
-README.md
+# Зависимости
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Сборка
+dist/
+build/
+coverage/
+
+# Переменные окружения
 .env
-coverage
-.nyc_output
+.env.local
+.env.development
+.env.production
+
+# Логи
+logs/
+*.log
+
+# Временные файлы
+tmp/
+temp/
+
+# Git
+.git/
+.gitignore
+
+# Docker файлы (чтобы не копировать сами себя)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Тесты
+test/
+*.test.js
+*.spec.js
+
+# Документация
+README.md
+docs/
+
+# Кэш
+.npm
+.cache/
