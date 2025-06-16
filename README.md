@@ -44,8 +44,6 @@ DB_PASSWORD=postgres
 DB_NAME=books_db
 ```
 
-4. Запустите PostgreSQL и создайте базу данных `books_db`
-
 5. Запустите приложение:
 ```bash
 # Режим разработки
