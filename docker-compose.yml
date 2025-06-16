@@ -3,8 +3,10 @@ version: '3.8'
 services:
   app:
     build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-    - "3000:3000"
+      - "3000:3000"
     environment:
       - NODE_ENV=development
       - PORT=3000
@@ -12,19 +14,21 @@ services:
       - DB_PORT=5432
       - DB_USER=postgres
       - DB_PASSWORD=postgres
+      - DB_NAME=books_db
+      - DB_SYNC=true
     depends_on:
       - postgres
 
   postgres:
-  image: postgres:15
-  enviroment: 
-    POSTGRES_DB: books_db
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: postgres
-  ports:
-    - 5432:5432
-  volumes:
-    - postgres_data:/var/lib/postgresql/data
+    image: postgres:15
+    environment:
+      POSTGRES_DB: books_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:
