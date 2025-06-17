@@ -2,9 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModuleOptions, JwtOptionsFactory } from '@nestjs/jwt';
 
-const ACCESS_TOKEN_EXPIRES_IN = '1h';
-const REFRESH_TOKEN_EXPIRES_IN = '7d';
-
 @Injectable()
 export class JwtConfigService implements JwtOptionsFactory {
     constructor(private configService: ConfigService) {}
@@ -26,11 +23,19 @@ export class JwtConfigService implements JwtOptionsFactory {
     }
 
     get accessExpiresIn(): string {
-        return ACCESS_TOKEN_EXPIRES_IN;
+        const expiresIn = this.configService.get<string>('JWT_ACCESS_EXPIRES_IN');
+        if (!expiresIn) {
+            throw new Error('JWT_ACCESS_EXPIRES_IN is not defined');
+        }
+        return expiresIn;
     }
 
     get refreshExpiresIn(): string {
-        return REFRESH_TOKEN_EXPIRES_IN;
+        const expiresIn = this.configService.get<string>('JWT_REFRESH_EXPIRES_IN');
+        if (!expiresIn) {
+            throw new Error('JWT_REFRESH_EXPIRES_IN is not defined');
+        }
+        return expiresIn;
     }
 
     createJwtOptions(): JwtModuleOptions {
