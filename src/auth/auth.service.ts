@@ -73,6 +73,7 @@ export class AuthService {
             }
 
             const user = await this.usersService.findById(payload.sub);
+
             if (!user) {
                 throw new UnauthorizedException('User not found');
             }
@@ -91,11 +92,13 @@ export class AuthService {
         const user = await this.usersService.create(registerDto);
         const tokens = await this.generateTokens(user);
         await this.saveRefreshToken(user.id, tokens.refresh_token);
+
         return { ...tokens, user };
     }
 
     async login(loginDto: LoginDto): Promise<LoginResponseDto> {
         const user = await this.usersService.findByEmail(loginDto.email);
+
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
         }
@@ -111,6 +114,7 @@ export class AuthService {
 
         const tokens = await this.generateTokens(user);
         await this.saveRefreshToken(user.id, tokens.refresh_token);
+        
         return { ...tokens, user };
     }
 }
