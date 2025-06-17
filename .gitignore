@@ -8,8 +8,7 @@ npm-debug.log*
 
 # Переменные окружения (ВАЖНО!)
 .env
-.env.local
-.env.production
+
 
 # Логи
 logs
