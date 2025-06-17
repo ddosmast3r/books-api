@@ -11,6 +11,7 @@ export class JwtConfigService implements JwtOptionsFactory {
         if (!secret) {
             throw new Error('JWT_ACCESS_SECRET is not defined');
         }
+
         return secret;
     }
 
@@ -45,7 +46,6 @@ export class JwtConfigService implements JwtOptionsFactory {
     }
 
     createJwtOptions(): JwtModuleOptions {
-        
         return {
             secret: this.accessSecret,
             signOptions: { expiresIn: this.accessExpiresIn },
