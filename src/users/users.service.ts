@@ -28,7 +28,7 @@ export class UsersService {
             password: hashedPassword,
         });
 
-        return this.usersRepository.save(newUser);
+       return this.usersRepository.save(newUser);
     }
 
     async validatePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {

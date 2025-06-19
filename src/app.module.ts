@@ -6,17 +6,19 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
+import { BooksModule } from './books/books.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+    isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
     AuthModule,
-    UsersModule
+    UsersModule,
+    BooksModule
   ],
   controllers: [AppController],
   providers: [AppService],
