@@ -47,7 +47,7 @@ export class GenresController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles('user')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create new genre' })
   @ApiBody({
@@ -79,7 +79,7 @@ export class GenresController {
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: 'Forbidden - Admin role required',
+    description: 'Forbidden - User role required',
   })
   create(@Body() createGenreDto: CreateGenreDto): Promise<Genre> {
     return this.genresService.create(createGenreDto);
