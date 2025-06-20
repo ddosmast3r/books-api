@@ -20,7 +20,7 @@ export class GenresService {
     const genre = await this.genreRepository.findOne({ where: { id } });
     
     if (!genre) {
-      throw new NotFoundException(`Жанр с ID ${id} не найден`);
+      throw new NotFoundException(`Genre with ID ${id} not found`);
     }
     
     return genre;
@@ -28,14 +28,12 @@ export class GenresService {
 
   async create(createGenreDto: CreateGenreDto): Promise<Genre> {
     const genre = this.genreRepository.create(createGenreDto);
-    
     return this.genreRepository.save(genre);
   }
 
   async update(id: number, updateGenreDto: UpdateGenreDto): Promise<Genre> {
     const genre = await this.findOne(id);
     Object.assign(genre, updateGenreDto);
-
     return this.genreRepository.save(genre);
   }
 
