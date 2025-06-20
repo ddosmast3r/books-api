@@ -27,18 +27,47 @@ export class GenresService {
   }
 
   async create(createGenreDto: CreateGenreDto): Promise<Genre> {
-    const genre = this.genreRepository.create(createGenreDto);
+    const genreData = { ...createGenreDto };
+    
+    if (!genreData.slug) {
+      genreData.slug = this.generateSlug(genreData.name);
+    }
+    
+    const genre = this.genreRepository.create(genreData);
+    
     return this.genreRepository.save(genre);
   }
 
   async update(id: number, updateGenreDto: UpdateGenreDto): Promise<Genre> {
     const genre = await this.findOne(id);
-    Object.assign(genre, updateGenreDto);
-    return this.genreRepository.save(genre);
+
+    const dataToUpdate = { ...updateGenreDto };
+
+    if (dataToUpdate.name && !dataToUpdate.slug) {
+      dataToUpdate.slug = this.generateSlug(dataToUpdate.name);
+    }
+
+    const updatedGenre = {
+      ...genre,
+      ...dataToUpdate,
+    };
+
+    return this.genreRepository.save(updatedGenre);
   }
 
   async remove(id: number): Promise<void> {
     const genre = await this.findOne(id);
+    
     await this.genreRepository.remove(genre);
+  }
+
+  private generateSlug(name: string): string {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-') 
+      .replace(/-+/g, '-') 
+      .replace(/^-+|-+$/g, '') 
+      .trim();
   }
 } 

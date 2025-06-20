@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, HttpStatus, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { GenresService } from './genres.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
 import { Genre } from './genre.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @ApiTags('Genres')
 @Controller('genres')
@@ -43,6 +46,9 @@ export class GenresController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create new genre' })
   @ApiBody({
     type: CreateGenreDto,
@@ -67,11 +73,22 @@ export class GenresController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Invalid data',
   })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - Admin role required',
+  })
   create(@Body() createGenreDto: CreateGenreDto): Promise<Genre> {
     return this.genresService.create(createGenreDto);
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update genre' })
   @ApiParam({
     name: 'id',
@@ -105,6 +122,14 @@ export class GenresController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Invalid data',
   })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - Admin role required',
+  })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateGenreDto: UpdateGenreDto,
@@ -113,6 +138,9 @@ export class GenresController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete genre' })
   @ApiParam({
     name: 'id',
@@ -127,6 +155,14 @@ export class GenresController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'Genre not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - Admin role required',
   })
   remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.genresService.remove(id);

@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "${PORT}:${PORT}"
+      - "${API_PORT}:${PORT}"
     env_file:
       - .env
     volumes:

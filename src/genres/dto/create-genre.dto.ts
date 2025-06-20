@@ -1,5 +1,5 @@
 import { IsString, IsOptional, Length } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateGenreDto {
   @ApiProperty({
@@ -12,17 +12,18 @@ export class CreateGenreDto {
   @Length(2, 100, { message: 'Name must be between 2 and 100 characters' })
   name: string;
 
-  @ApiProperty({
-    description: 'URL-friendly genre name',
+  @ApiPropertyOptional({
+    description: 'URL-friendly genre name (auto-generated from name if not provided)',
     example: 'science-fiction',
     minLength: 2,
     maxLength: 100,
   })
+  @IsOptional()
   @IsString({ message: 'Slug must be a string' })
   @Length(2, 100, { message: 'Slug must be between 2 and 100 characters' })
-  slug: string;
+  slug?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Genre description',
     example: 'Science fiction and fantasy literature',
     required: false,
