@@ -16,8 +16,10 @@ export class GenresService {
   ) {}
 
   async findAll(filterGenresDto: FilterGenresDto): Promise<PaginatedGenresDto> {
-    const { search, slug, sortBy = 'createdAt', order = 'desc', limit = 10, offset = 0 } = filterGenresDto;
+    const { search, slug, sortBy = 'createdAt', order = 'desc', limit = 10, page = 1 } = filterGenresDto;
     
+    const offset = (page - 1) * limit;
+
     const query = this.genreRepository.createQueryBuilder('genre');
 
     if (search) {
@@ -35,9 +37,10 @@ export class GenresService {
 
     query.take(limit).skip(offset);
 
-    const [items, total] = await query.getManyAndCount();
+    const [genres, total] = await query.getManyAndCount();
+    const totalPages = Math.ceil(total / limit);
 
-    return { items, total };
+    return { genres, total, page, totalPages };
   }
 
   async findOne(id: number): Promise<Genre> {
