@@ -5,6 +5,7 @@ import { Genre } from './genre.entity';
 import { UpdateGenreDto } from './dto/update-genre.dto';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { FilterGenresDto } from './dto/filter-genres.dto';
+import { PaginatedGenresDto } from './dto/paginated-genres.dto';
 import { Like } from 'typeorm';
 
 @Injectable()
@@ -14,7 +15,7 @@ export class GenresService {
     private genreRepository: Repository<Genre>,
   ) {}
 
-  async findAll(filterGenresDto: FilterGenresDto): Promise<{ items: Genre[]; total: number }> {
+  async findAll(filterGenresDto: FilterGenresDto): Promise<PaginatedGenresDto> {
     const { search, slug, sortBy = 'createdAt', order = 'desc', limit = 10, offset = 0 } = filterGenresDto;
     
     const query = this.genreRepository.createQueryBuilder('genre');

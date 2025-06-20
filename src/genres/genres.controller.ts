@@ -8,6 +8,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { FilterGenresDto } from './dto/filter-genres.dto';
+import { PaginatedGenresDto } from './dto/paginated-genres.dto';
 
 @ApiTags('Genres')
 @Controller('genres')
@@ -19,21 +20,9 @@ export class GenresController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'List of all genres',
-    schema: {
-      type: 'object',
-      properties: {
-        items: {
-          type: 'array',
-          items: { $ref: '#/components/schemas/Genre' }
-        },
-        total: {
-          type: 'number',
-          description: 'Total number of genres'
-        }
-      }
-    }
+    type: PaginatedGenresDto,
   })
-  findAll(@Query() filterGenresDto: FilterGenresDto): Promise<{ items: Genre[]; total: number }> {
+  findAll(@Query() filterGenresDto: FilterGenresDto): Promise<PaginatedGenresDto> {
     return this.genresService.findAll(filterGenresDto);
   }
 
