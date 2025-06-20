@@ -56,14 +56,14 @@ export class FilterGenresDto {
     limit?: number = 10;
 
     @ApiPropertyOptional({
-        description: 'Offset for pagination',
+        description: 'Page number for pagination',
         required: false,
-        minimum: 0,
-        default: 0
+        minimum: 1,
+        default: 1
     })
     @IsOptional()
     @Transform(({ value }) => parseInt(value))
     @IsNumber()
-    @Min(0)
-    offset?: number = 0;
+    @Min(1)
+    page?: number = 1;
 }

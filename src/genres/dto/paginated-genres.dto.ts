@@ -3,7 +3,7 @@ import { Genre } from '../genre.entity';
 
 export class PaginatedGenresDto {
   @ApiProperty({
-    description: 'Array of genres',
+    description: 'Array of genres for the current page',
     type: [Genre],
     example: [
       {
@@ -16,12 +16,26 @@ export class PaginatedGenresDto {
       }
     ]
   })
-  items: Genre[];
+  genres: Genre[];
+
+  @ApiProperty({
+    description: 'Current page number',
+    type: 'number',
+    example: 1,
+  })
+  page: number;
+
+  @ApiProperty({
+    description: 'Total number of pages available',
+    type: 'number',
+    example: 10,
+  })
+  totalPages: number;
 
   @ApiProperty({
     description: 'Total number of genres matching the filter',
     type: 'number',
-    example: 10
+    example: 100,
   })
   total: number;
 } 
