@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, HttpStatus, UseGuards, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { GenresService } from './genres.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
@@ -7,6 +7,8 @@ import { Genre } from './genre.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { FilterGenresDto } from './dto/filter-genres.dto';
+import { PaginatedGenresDto } from './dto/paginated-genres.dto';
 
 @ApiTags('Genres')
 @Controller('genres')
@@ -18,10 +20,10 @@ export class GenresController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'List of all genres',
-    type: [Genre],
+    type: PaginatedGenresDto,
   })
-  findAll(): Promise<Genre[]> {
-    return this.genresService.findAll();
+  findAll(@Query() filterGenresDto: FilterGenresDto): Promise<PaginatedGenresDto> {
+    return this.genresService.findAll(filterGenresDto);
   }
 
   @Get(':id')
