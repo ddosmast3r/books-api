@@ -76,8 +76,8 @@ export class AuthorsService {
   async update(id: number, updateAuthorDto: UpdateAuthorDto): Promise<Author> {
     const author = await this.findOne(id);
 
-
     Object.assign(author, updateAuthorDto);
+
     return this.authorRepository.save(author);
   }
 
