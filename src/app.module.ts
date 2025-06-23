@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmConfigService } from './config/typeorm-config.service';
 import { GenresModule } from './genres/genres.module';
+import { AuthorsModule } from './authors/authors.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { GenresModule } from './genres/genres.module';
     AuthModule,
     UsersModule,
     GenresModule,
+    AuthorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
