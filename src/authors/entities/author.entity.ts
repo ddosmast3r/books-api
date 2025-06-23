@@ -5,7 +5,7 @@ import {
   Entity,
 } from 'typeorm';
 import { BaseEntity } from '../../common/entities/base.entity';
-import slugify from 'slugify';
+import { slugify } from '../../common/utils';
 
 @Entity('authors')
 export class Author extends BaseEntity {
@@ -26,17 +26,4 @@ export class Author extends BaseEntity {
 
   @Column({ type: 'text', nullable: true })
   bio?: string;
-
-  generateFullName() {
-    this.fullName = `${this.firstName} ${
-      this.middleName ? this.middleName + ' ' : ''
-    }${this.lastName}`;
-  }
-
-  generateSlug() {
-    const fullName = `${this.firstName} ${
-      this.middleName ? this.middleName + ' ' : ''
-    }${this.lastName}`;
-    this.slug = slugify(fullName, { lower: true });
-  }
 }
