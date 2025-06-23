@@ -36,17 +36,4 @@ export class CreateAuthorDto {
   @IsOptional()
   bio?: string;
   
-  @BeforeInsert()
-  @BeforeUpdate()
-  generateFullName() {
-    this.fullName = `${this.firstName} ${
-      this.middleName ? this.middleName + ' ' : ''
-    }${this.lastName}`;
-  }
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  generateSlug() {
-    this.slug = slugify(this.fullName, { lower: true });
-  }
 }

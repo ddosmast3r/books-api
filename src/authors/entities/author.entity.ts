@@ -27,13 +27,16 @@ export class Author extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   bio?: string;
 
-  @BeforeInsert()
-  @BeforeUpdate()
-  generateFullNameAndSlug() {
+  generateFullName() {
     this.fullName = `${this.firstName} ${
       this.middleName ? this.middleName + ' ' : ''
     }${this.lastName}`;
+  }
 
-    this.slug = slugify(this.fullName, { lower: true });
+  generateSlug() {
+    const fullName = `${this.firstName} ${
+      this.middleName ? this.middleName + ' ' : ''
+    }${this.lastName}`;
+    this.slug = slugify(fullName, { lower: true });
   }
 }
