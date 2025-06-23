@@ -1,11 +1,5 @@
-import {
-  BeforeInsert,
-  BeforeUpdate,
-  Column,
-  Entity,
-} from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '../../common/entities/base.entity';
-import { slugify } from '../../common/utils';
 
 @Entity('authors')
 export class Author extends BaseEntity {
