@@ -1,8 +1,9 @@
 import { ApiBody, ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { BeforeInsert, BeforeUpdate } from "typeorm";
+import { slugify } from "slugify";
 
 export class CreateAuthorDto {
-
   @ApiProperty({
     description: 'The first name of the author',
     example: 'John',
@@ -27,7 +28,25 @@ export class CreateAuthorDto {
   @IsOptional()
   middleName?: string;
   
+  @ApiProperty({
+    description: 'The bio of the author',
+    example: 'John Doe is a software engineer',
+  })
+  @IsString()
+  @IsOptional()
+  bio?: string;
+  
+  @BeforeInsert()
+  @BeforeUpdate()
+  generateFullName() {
+    this.fullName = `${this.firstName} ${
+      this.middleName ? this.middleName + ' ' : ''
+    }${this.lastName}`;
+  }
 
-  
-  
+  @BeforeInsert()
+  @BeforeUpdate()
+  generateSlug() {
+    this.slug = slugify(this.fullName, { lower: true });
+  }
 }

@@ -2,17 +2,13 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Column,
-  CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { BaseEntity } from '../../common/entities/base.entity';
 import slugify from 'slugify';
 
 @Entity('authors')
 export class Author extends BaseEntity {
-
   @Column()
   firstName: string;
 
@@ -33,7 +29,7 @@ export class Author extends BaseEntity {
 
   @BeforeInsert()
   @BeforeUpdate()
-  generateSlug() {
+  generateFullNameAndSlug() {
     this.fullName = `${this.firstName} ${
       this.middleName ? this.middleName + ' ' : ''
     }${this.lastName}`;
