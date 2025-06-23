@@ -6,6 +6,7 @@ import slugify from 'slugify';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FilterAuthorsDto } from './dto/filter-authors.dto';
+import 'crypto';
 
 @Injectable()
 export class AuthorsService {
@@ -15,13 +16,14 @@ export class AuthorsService {
   ) {}
 
   async create(createAuthorDto: CreateAuthorDto): Promise<Author> {
-    const { firstName, lastName, middleName, bio } = createAuthorDto;
-
-    const fullName = this.generateFullName({ firstName, lastName, middleName });
+    const fullName = this.generateFullName(createAuthorDto);
     const slug = this.generateSlug(fullName);
 
     const author = this.authorRepository.create({
-      ...createAuthorDto,
+      firstName: createAuthorDto.firstName,
+      lastName: createAuthorDto.lastName,
+      middleName: createAuthorDto.middleName,
+      bio: createAuthorDto.bio,
       fullName,
       slug,
     });
@@ -76,7 +78,16 @@ export class AuthorsService {
   async update(id: number, updateAuthorDto: UpdateAuthorDto): Promise<Author> {
     const author = await this.findOne(id);
 
-    Object.assign(author, updateAuthorDto);
+    author.firstName = updateAuthorDto.firstName ?? author.firstName;
+    author.lastName = updateAuthorDto.lastName ?? author.lastName;
+    author.middleName = updateAuthorDto.middleName ?? author.middleName;
+    author.bio = updateAuthorDto.bio ?? author.bio;
+
+    const newFullName = this.generateFullName(author);
+    if (newFullName !== author.fullName) {
+      author.fullName = newFullName;
+      author.slug = this.generateSlug(newFullName);
+    }
 
     return this.authorRepository.save(author);
   }
@@ -93,7 +104,6 @@ export class AuthorsService {
     lastName: string;
     middleName?: string;
   }): string {
-    
     return `${authorData.firstName} ${
       authorData.middleName ? authorData.middleName + ' ' : ''
     }${authorData.lastName}`;
