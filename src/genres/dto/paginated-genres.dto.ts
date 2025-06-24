@@ -13,9 +13,9 @@ export class PaginatedGenresDto extends BasePaginatedResponseDto {
         slug: 'science-fiction',
         description: 'Science fiction and fantasy literature',
         createdAt: '2025-06-19T14:46:44.802Z',
-        updatedAt: '2025-06-19T14:46:44.802Z'
-      }
-    ]
+        updatedAt: '2025-06-19T14:46:44.802Z',
+      },
+    ],
   })
   genres: Genre[];
-} 
+}
