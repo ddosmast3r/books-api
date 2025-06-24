@@ -17,8 +17,8 @@ export class AuthorsController {
   @ApiBody({ type: CreateAuthorDto, description: 'Author creation data' })
   @ApiResponse({ status: 201, description: 'The author has been successfully created.', type: Author })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @Post()
   @UseGuards(JwtAuthGuard)
+  @Post()
   create(@Body() createAuthorDto: CreateAuthorDto): Promise<Author> {
     return this.authorsService.create(createAuthorDto);
   }
@@ -45,8 +45,8 @@ export class AuthorsController {
   @ApiResponse({ status: 200, description: 'The author has been successfully updated.', type: Author })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Author not found.' })
-  @Patch(':id')
   @UseGuards(JwtAuthGuard)
+  @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateAuthorDto: UpdateAuthorDto): Promise<Author> {
     return this.authorsService.update(id, updateAuthorDto);
   }
@@ -56,8 +56,8 @@ export class AuthorsController {
   @ApiResponse({ status: 200, description: 'The author has been successfully deleted.', type: Author })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Author not found.' })
-  @Delete(':id')
   @UseGuards(JwtAuthGuard)
+  @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number): Promise<Author> {
     return this.authorsService.remove(id);
   }

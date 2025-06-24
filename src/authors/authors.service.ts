@@ -6,7 +6,7 @@ import slugify from 'slugify';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FilterAuthorsDto } from './dto/filter-authors.dto';
-import 'crypto';
+
 
 @Injectable()
 export class AuthorsService {
@@ -81,11 +81,7 @@ export class AuthorsService {
       throw new NotFoundException('Author not found');
     }
 
-    if (
-      updateAuthorDto.firstName !== undefined ||
-      updateAuthorDto.lastName !== undefined ||
-      updateAuthorDto.middleName !== undefined
-    ) {
+    if ([updateAuthorDto.firstName, updateAuthorDto.lastName, updateAuthorDto.middleName].some(value => value !== undefined)) {
       author.fullName = this.generateFullName(author);
       author.slug = this.generateSlug(author.fullName);
     }

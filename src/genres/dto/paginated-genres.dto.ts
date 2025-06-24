@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Genre } from '../genre.entity';
+import { PaginationMetaDto } from '../../common/dto/pagination-meta.dto';
 
-export class PaginatedGenresDto {
+export class PaginatedGenresDto extends PaginationMetaDto {
   @ApiProperty({
     description: 'Array of genres for the current page',
     type: [Genre],
@@ -17,25 +18,4 @@ export class PaginatedGenresDto {
     ]
   })
   genres: Genre[];
-
-  @ApiProperty({
-    description: 'Current page number',
-    type: 'number',
-    example: 1,
-  })
-  page: number;
-
-  @ApiProperty({
-    description: 'Total number of pages available',
-    type: 'number',
-    example: 10,
-  })
-  totalPages: number;
-
-  @ApiProperty({
-    description: 'Total number of genres matching the filter',
-    type: 'number',
-    example: 100,
-  })
-  total: number;
 } 

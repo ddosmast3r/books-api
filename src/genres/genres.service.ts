@@ -38,9 +38,9 @@ export class GenresService {
     query.take(limit).skip(offset);
 
     const [genres, total] = await query.getManyAndCount();
-    const totalPages = Math.ceil(total / limit);
+    const lastPage = Math.ceil(total / limit);
 
-    return { genres, total, page, totalPages };
+    return { genres, total, page, limit, lastPage };
   }
 
   async findOne(id: number): Promise<Genre> {
