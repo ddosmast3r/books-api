@@ -67,7 +67,7 @@ export class AuthorsService {
 
   async findOne(id: number) {
     const author = await this.authorRepository.findOne({ where: { id } });
-   
+
     if (!author) {
       throw new NotFoundException('Author not found');
     }
@@ -76,12 +76,22 @@ export class AuthorsService {
   }
 
   async update(id: number, updateAuthorDto: UpdateAuthorDto): Promise<Author> {
-    const author = await this.authorRepository.preload({ id, ...updateAuthorDto });
+    const author = await this.authorRepository.preload({
+      id,
+      ...updateAuthorDto,
+    });
+
     if (!author) {
       throw new NotFoundException('Author not found');
     }
 
-    if ([updateAuthorDto.firstName, updateAuthorDto.lastName, updateAuthorDto.middleName].some(value => value !== undefined)) {
+    if (
+      [
+        updateAuthorDto.firstName,
+        updateAuthorDto.lastName,
+        updateAuthorDto.middleName,
+      ].some((value) => value !== undefined)
+    ) {
       author.fullName = this.generateFullName(author);
       author.slug = this.generateSlug(author.fullName);
     }

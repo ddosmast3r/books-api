@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, IsString, Min } from 'class-validator';
 
-export class PaginationQueryDto {
+export class BasePaginateQueryDto {
   @ApiProperty({
     description: 'Search string to filter results',
     required: false,

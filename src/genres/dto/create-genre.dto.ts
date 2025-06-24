@@ -13,7 +13,8 @@ export class CreateGenreDto {
   name: string;
 
   @ApiPropertyOptional({
-    description: 'URL-friendly genre name (auto-generated from name if not provided)',
+    description:
+      'URL-friendly genre name (auto-generated from name if not provided)',
     example: 'science-fiction',
     minLength: 2,
     maxLength: 100,

@@ -1,5 +1,24 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, HttpStatus, UseGuards, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  ParseIntPipe,
+  HttpStatus,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { GenresService } from './genres.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
@@ -15,18 +34,18 @@ import { PaginatedGenresDto } from './dto/paginated-genres.dto';
 export class GenresController {
   constructor(private readonly genresService: GenresService) {}
 
-  @Get()
   @ApiOperation({ summary: 'Get all genres' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'List of all genres',
     type: PaginatedGenresDto,
   })
-  findAll(@Query() filterGenresDto: FilterGenresDto): Promise<PaginatedGenresDto> {
+  @Get()
+  findAll(
+    @Query() filterGenresDto: FilterGenresDto,
+  ): Promise<PaginatedGenresDto> {
     return this.genresService.findAll(filterGenresDto);
   }
-
-  @Get(':id')
   @ApiOperation({ summary: 'Get genre by ID' })
   @ApiParam({
     name: 'id',
@@ -47,7 +66,6 @@ export class GenresController {
     return this.genresService.findOne(id);
   }
 
-  @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('user')
   @ApiBearerAuth()
@@ -83,11 +101,11 @@ export class GenresController {
     status: HttpStatus.FORBIDDEN,
     description: 'Forbidden - User role required',
   })
+  @Post()
   create(@Body() createGenreDto: CreateGenreDto): Promise<Genre> {
     return this.genresService.create(createGenreDto);
   }
 
-  @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
@@ -132,6 +150,7 @@ export class GenresController {
     status: HttpStatus.FORBIDDEN,
     description: 'Forbidden - Admin role required',
   })
+  @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateGenreDto: UpdateGenreDto,
@@ -139,7 +158,6 @@ export class GenresController {
     return this.genresService.update(id, updateGenreDto);
   }
 
-  @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @ApiBearerAuth()
@@ -166,7 +184,8 @@ export class GenresController {
     status: HttpStatus.FORBIDDEN,
     description: 'Forbidden - Admin role required',
   })
+  @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.genresService.remove(id);
   }
-} 
+}

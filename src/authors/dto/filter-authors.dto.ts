@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsIn, IsOptional } from "class-validator";
-import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { BasePaginateQueryDto } from '../../common/dto/base-paginate-query.dto';
 
-export class FilterAuthorsDto extends PaginationQueryDto {
+export class FilterAuthorsDto extends BasePaginateQueryDto {
   @ApiProperty({
     description: "Field to sort by (specific for authors: 'name' or 'createdAt')",
     required: false,
