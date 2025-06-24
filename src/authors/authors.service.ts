@@ -75,16 +75,16 @@ export class AuthorsService {
     return author;
   }
 
-  async update(id: number, dto: UpdateAuthorDto): Promise<Author> {
-    const author = await this.authorRepository.preload({ id, ...dto });
+  async update(id: number, updateAuthorDto: UpdateAuthorDto): Promise<Author> {
+    const author = await this.authorRepository.preload({ id, ...updateAuthorDto });
     if (!author) {
       throw new NotFoundException('Author not found');
     }
 
     if (
-      dto.firstName !== undefined ||
-      dto.lastName !== undefined ||
-      dto.middleName !== undefined
+      updateAuthorDto.firstName !== undefined ||
+      updateAuthorDto.lastName !== undefined ||
+      updateAuthorDto.middleName !== undefined
     ) {
       author.fullName = this.generateFullName(author);
       author.slug = this.generateSlug(author.fullName);
