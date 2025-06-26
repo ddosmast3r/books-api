@@ -5,32 +5,38 @@ import {
   ManyToMany,
   JoinTable,
   CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Genre } from '../genres/genre.entity';
+import { BaseEntity } from '../common/entities/base.entity';
+import { Author } from '../authors/author.entity';
 
 @Entity('books')
-export class BookEntity {
+export class BookEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
-
   @Column()
   title: string;
 
-  @ManyToMany(() => Genre, (genre) => genre.books)
+  @ManyToMany(() => Genre, (genre: Genre): string => genre.name)
   @JoinTable()
   genres: Genre[];
 
-  @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  created_at: Date;
+  @ManyToMany(() => Author, (author: Author): string => author.fullName)
+  @JoinTable()
+  @Column()
+  author: Author;
 
-  @UpdateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
-  })
-  updated_at: Date;
+  @Column()
+  year: number;
+  @CreateDateColumn()
+  @Column()
+  description: string;
+
+  @Column()
+  publicationDate: Date;
+
+  @Column()
+  language: string;
+
+  @Column()
+  pages: number;
 }

@@ -16,7 +16,7 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FilterAuthorsDto } from './dto/filter-authors.dto';
-import { Author } from './entities/author.entity';
+import { Author } from './author.entity';
 import { PaginatedAuthorsDto } from './dto/paginated-authors.dto';
 
 @Controller('authors')
