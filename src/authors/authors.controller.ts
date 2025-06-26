@@ -16,7 +16,7 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FilterAuthorsDto } from './dto/filter-authors.dto';
-import { Author } from './entities/author.entity';
+import { AuthorEntity } from './author.entity';
 import { PaginatedAuthorsDto } from './dto/paginated-authors.dto';
 
 @Controller('authors')
@@ -29,12 +29,12 @@ export class AuthorsController {
   @ApiResponse({
     status: 201,
     description: 'The author has been successfully created.',
-    type: Author,
+    type: AuthorEntity,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createAuthorDto: CreateAuthorDto): Promise<Author> {
+  create(@Body() createAuthorDto: CreateAuthorDto): Promise<AuthorEntity> {
     return this.authorsService.create(createAuthorDto);
   }
 
@@ -52,10 +52,10 @@ export class AuthorsController {
 
   @ApiOperation({ summary: 'Get a single author by ID' })
   @ApiBody({ type: FilterAuthorsDto, description: 'Filter authors data' })
-  @ApiResponse({ status: 200, description: 'Author details.', type: Author })
+  @ApiResponse({ status: 200, description: 'Author details.', type: AuthorEntity })
   @ApiResponse({ status: 404, description: 'Author not found.' })
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<Author> {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<AuthorEntity> {
     return this.authorsService.findOne(id);
   }
 
@@ -64,7 +64,7 @@ export class AuthorsController {
   @ApiResponse({
     status: 200,
     description: 'The author has been successfully updated.',
-    type: Author,
+    type: AuthorEntity,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Author not found.' })
@@ -73,7 +73,7 @@ export class AuthorsController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateAuthorDto: UpdateAuthorDto,
-  ): Promise<Author> {
+  ): Promise<AuthorEntity> {
     return this.authorsService.update(id, updateAuthorDto);
   }
 
@@ -82,13 +82,13 @@ export class AuthorsController {
   @ApiResponse({
     status: 200,
     description: 'The author has been successfully deleted.',
-    type: Author,
+    type: AuthorEntity,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Author not found.' })
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<Author> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<AuthorEntity> {
     return this.authorsService.remove(id);
   }
 }

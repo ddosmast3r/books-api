@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { User } from 'src/users/user.entity';
+import { UserEntity } from 'src/users/user.entity';
 import { LoginResponseDto } from './login-response.dto';
 import { RefreshTokenEntity } from './dto/refresh-token.entity';
 import { Repository } from 'typeorm';
@@ -35,7 +35,7 @@ export class AuthService {
     await this.refreshTokenRepository.save(refreshToken);
   }
 
-  private async generateTokens(user: User): Promise<AuthTokensDto> {
+  private async generateTokens(user: UserEntity): Promise<AuthTokensDto> {
     const [access_token, refresh_token] = await Promise.all([
       this.jwtService.signAsync(
         { sub: user.id, email: user.email },

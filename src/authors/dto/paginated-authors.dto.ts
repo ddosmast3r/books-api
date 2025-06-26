@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Author } from '../entities/author.entity';
+import { AuthorEntity } from '../author.entity';
 import { BasePaginatedResponseDto } from '../../common/dto/base-paginated-response.dto';
 
 export class PaginatedAuthorsDto extends BasePaginatedResponseDto {
-  @ApiProperty({ type: () => [Author] })
-  data: Author[];
-} 
+  @ApiProperty({ type: () => [AuthorEntity] })
+  data: AuthorEntity[];
+}

@@ -1,25 +1,22 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { BaseEntity } from '../common/entities/base.entity';
 
 @Entity('users')
-export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+export class UserEntity extends BaseEntity {
+  @Column({ unique: true })
+  email: string;
 
-    @Column({ unique: true })
-    email: string;
+  @Column()
+  @Exclude()
+  password: string;
 
-    @Column()
-    @Exclude()
-    password: string;
+  @Column()
+  firstName: string;
 
-    @Column()
-    firstName: string;
+  @Column()
+  lastName: string;
 
-    @Column()
-    lastName: string;
-
-    @Column({ default: true })
-    isActive: boolean;
+  @Column({ default: true })
+  isActive: boolean;
 }
-

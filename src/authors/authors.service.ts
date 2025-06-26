@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
-import { Author } from './entities/author.entity';
+import { AuthorEntity } from './author.entity';
 import slugify from 'slugify';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,11 +11,11 @@ import { FilterAuthorsDto } from './dto/filter-authors.dto';
 @Injectable()
 export class AuthorsService {
   constructor(
-    @InjectRepository(Author)
-    private readonly authorRepository: Repository<Author>,
+    @InjectRepository(AuthorEntity)
+    private readonly authorRepository: Repository<AuthorEntity>,
   ) {}
 
-  async create(createAuthorDto: CreateAuthorDto): Promise<Author> {
+  async create(createAuthorDto: CreateAuthorDto): Promise<AuthorEntity> {
     const fullName = this.generateFullName(createAuthorDto);
     const slug = this.generateSlug(fullName);
 
@@ -75,7 +75,7 @@ export class AuthorsService {
     return author;
   }
 
-  async update(id: number, updateAuthorDto: UpdateAuthorDto): Promise<Author> {
+  async update(id: number, updateAuthorDto: UpdateAuthorDto): Promise<AuthorEntity> {
     const author = await this.authorRepository.preload({
       id,
       ...updateAuthorDto,
@@ -99,7 +99,7 @@ export class AuthorsService {
     return this.authorRepository.save(author);
   }
 
-  async remove(id: number): Promise<Author> {
+  async remove(id: number): Promise<AuthorEntity> {
     const author = await this.findOne(id);
     await this.authorRepository.remove(author);
 
