@@ -1,20 +1,20 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "src/users/user.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/user.entity';
 
 @Entity()
 export class RefreshTokenEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    token: string;
+  @Column()
+  token: string;
 
-    @Column()
-    expiresAt: Date;
+  @Column()
+  expiresAt: Date;
 
-    @ManyToOne(() => User, { onDelete: 'CASCADE' })
-    user: User;
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  user: User;
 
-    @Column()
-    userId: number;
+  @Column()
+  userId: number;
 }

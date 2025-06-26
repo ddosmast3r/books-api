@@ -9,34 +9,42 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
-   
-    @Post('register')
-    @ApiBody({ type: RegisterDto, description: 'User registration data' })
-    @ApiOperation({ summary: 'Register a new user' })
-    @ApiResponse({ status: 201, description: 'User registered successfully', type: LoginResponseDto })
-    async register(@Body() registerDto: RegisterDto) {
-        return this.authService.register(registerDto);
-    }
+  constructor(private authService: AuthService) {}
 
-    @Post("login")
-    @ApiBody({ type: LoginDto, description: 'User login data' })    
-    @ApiOperation({ summary: 'Login a user' })
-    @ApiResponse({ status: 201, description: 'User logged in successfully', type: LoginResponseDto })
-    async login(@Body() loginDto: LoginDto) {
-        return this.authService.login(loginDto);
-    }
+  @ApiBody({ type: RegisterDto, description: 'User registration data' })
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiResponse({
+    status: 201,
+    description: 'User registered successfully',
+    type: LoginResponseDto,
+  })
+  @Post('register')
+  async register(@Body() registerDto: RegisterDto) {
+    return this.authService.register(registerDto);
+  }
 
-    @Post('refresh')
-    @ApiBody({ type: RefreshTokenDto, description: 'Refresh token data' })
-    @ApiOperation({ summary: 'Refresh access and refresh tokens' })
-    @ApiResponse({ 
-        status: 201, 
-        description: 'Access and refresh tokens refreshed successfully', 
-        type: LoginResponseDto 
-    })
-    @ApiResponse({ status: 401, description: 'Invalid refresh token' }) 
-    async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
-        return this.authService.refreshToken(refreshTokenDto.refresh_token);
-    }
+  @ApiBody({ type: LoginDto, description: 'User login data' })
+  @ApiOperation({ summary: 'Login a user' })
+  @ApiResponse({
+    status: 201,
+    description: 'User logged in successfully',
+    type: LoginResponseDto,
+  })
+  @Post('login')
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
+  }
+
+  @ApiBody({ type: RefreshTokenDto, description: 'Refresh token data' })
+  @ApiOperation({ summary: 'Refresh access and refresh tokens' })
+  @ApiResponse({
+    status: 201,
+    description: 'Access and refresh tokens refreshed successfully',
+    type: LoginResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'Invalid refresh token' })
+  @Post('refresh')
+  async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshToken(refreshTokenDto.refresh_token);
+  }
 }

@@ -16,8 +16,15 @@ export class GenresService {
   ) {}
 
   async findAll(filterGenresDto: FilterGenresDto): Promise<PaginatedGenresDto> {
-    const { search, slug, sortBy = 'createdAt', order = 'desc', limit = 10, page = 1 } = filterGenresDto;
-    
+    const {
+      search,
+      slug,
+      sortBy = 'createdAt',
+      order = 'desc',
+      limit = 10,
+      page = 1,
+    } = filterGenresDto;
+
     const offset = (page - 1) * limit;
 
     const query = this.genreRepository.createQueryBuilder('genre');
@@ -25,7 +32,7 @@ export class GenresService {
     if (search) {
       query.andWhere(
         '(genre.name ILIKE :search OR genre.description ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
@@ -38,30 +45,30 @@ export class GenresService {
     query.take(limit).skip(offset);
 
     const [genres, total] = await query.getManyAndCount();
-    const totalPages = Math.ceil(total / limit);
+    const lastPage = Math.ceil(total / limit);
 
-    return { genres, total, page, totalPages };
+    return { genres, total, page, limit, lastPage };
   }
 
   async findOne(id: number): Promise<Genre> {
     const genre = await this.genreRepository.findOne({ where: { id } });
-    
+
     if (!genre) {
       throw new NotFoundException(`Genre with ID ${id} not found`);
     }
-    
+
     return genre;
   }
 
   async create(createGenreDto: CreateGenreDto): Promise<Genre> {
     const genreData = { ...createGenreDto };
-    
+
     if (!genreData.slug) {
       genreData.slug = this.generateSlug(genreData.name);
     }
-    
+
     const genre = this.genreRepository.create(genreData);
-    
+
     return this.genreRepository.save(genre);
   }
 
@@ -84,7 +91,7 @@ export class GenresService {
 
   async remove(id: number): Promise<void> {
     const genre = await this.findOne(id);
-    
+
     await this.genreRepository.remove(genre);
   }
 
@@ -97,4 +104,4 @@ export class GenresService {
       .replace(/^-+|-+$/g, '') 
       .trim();
   }
-} 
+}

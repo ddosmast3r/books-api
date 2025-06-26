@@ -1,7 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
-
-
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateAuthorDto {
   @ApiProperty({
@@ -27,7 +25,6 @@ export class CreateAuthorDto {
   @IsString()
   @IsOptional()
   middleName?: string;
-  
   @ApiProperty({
     description: 'The bio of the author',
     example: 'John Doe is a software engineer',
@@ -35,5 +32,4 @@ export class CreateAuthorDto {
   @IsString()
   @IsOptional()
   bio?: string;
-  
 }
