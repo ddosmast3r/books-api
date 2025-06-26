@@ -5,4 +5,4 @@ import { BasePaginatedResponseDto } from '../../common/dto/base-paginated-respon
 export class PaginatedAuthorsDto extends BasePaginatedResponseDto {
   @ApiProperty({ type: () => [Author] })
   data: Author[];
-} 
+}
