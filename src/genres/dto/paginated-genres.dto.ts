@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Genre } from '../genre.entity';
+import { GenreEntity } from '../genre.entity';
 import { BasePaginatedResponseDto } from '../../common/dto/base-paginated-response.dto';
 
 export class PaginatedGenresDto extends BasePaginatedResponseDto {
   @ApiProperty({
     description: 'Array of genres for the current page',
-    type: [Genre],
+    type: [GenreEntity],
     example: [
       {
         id: 1,
@@ -17,5 +17,5 @@ export class PaginatedGenresDto extends BasePaginatedResponseDto {
       },
     ],
   })
-  genres: Genre[];
+  genres: GenreEntity[];
 }

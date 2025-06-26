@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntity } from '../common/entities/base.entity';
 
 @Entity('genres')
-export class Genre extends BaseEntity {
+export class GenreEntity extends BaseEntity {
   @ApiProperty({
     description: 'Genre name',
     example: 'Science Fiction',

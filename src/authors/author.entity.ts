@@ -2,7 +2,7 @@ import { Column, Entity, RelationOptions } from 'typeorm';
 import { BaseEntity } from '../common/entities/base.entity';
 
 @Entity('authors')
-export class Author extends BaseEntity {
+export class AuthorEntity extends BaseEntity {
   @Column()
   firstName: string;
 

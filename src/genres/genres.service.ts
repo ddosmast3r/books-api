@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Genre } from './genre.entity';
+import { GenreEntity } from './genre.entity';
 import { UpdateGenreDto } from './dto/update-genre.dto';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { FilterGenresDto } from './dto/filter-genres.dto';
@@ -11,8 +11,8 @@ import { Like } from 'typeorm';
 @Injectable()
 export class GenresService {
   constructor(
-    @InjectRepository(Genre)
-    private genreRepository: Repository<Genre>,
+    @InjectRepository(GenreEntity)
+    private genreRepository: Repository<GenreEntity>,
   ) {}
 
   async findAll(filterGenresDto: FilterGenresDto): Promise<PaginatedGenresDto> {
@@ -50,7 +50,7 @@ export class GenresService {
     return { genres, total, page, limit, lastPage };
   }
 
-  async findOne(id: number): Promise<Genre> {
+  async findOne(id: number): Promise<GenreEntity> {
     const genre = await this.genreRepository.findOne({ where: { id } });
 
     if (!genre) {
@@ -60,7 +60,7 @@ export class GenresService {
     return genre;
   }
 
-  async create(createGenreDto: CreateGenreDto): Promise<Genre> {
+  async create(createGenreDto: CreateGenreDto): Promise<GenreEntity> {
     const genreData = { ...createGenreDto };
 
     if (!genreData.slug) {
@@ -72,7 +72,7 @@ export class GenresService {
     return this.genreRepository.save(genre);
   }
 
-  async update(id: number, updateGenreDto: UpdateGenreDto): Promise<Genre> {
+  async update(id: number, updateGenreDto: UpdateGenreDto): Promise<GenreEntity> {
     const genre = await this.findOne(id);
 
     const dataToUpdate = { ...updateGenreDto };

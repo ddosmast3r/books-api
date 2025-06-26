@@ -22,7 +22,7 @@ import {
 import { GenresService } from './genres.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
-import { Genre } from './genre.entity';
+import { GenreEntity } from './genre.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -56,13 +56,13 @@ export class GenresController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Genre found',
-    type: Genre,
+    type: GenreEntity,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'Genre not found',
   })
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<Genre> {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<GenreEntity> {
     return this.genresService.findOne(id);
   }
 
@@ -87,7 +87,7 @@ export class GenresController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Genre successfully created',
-    type: Genre,
+    type: GenreEntity,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -102,7 +102,7 @@ export class GenresController {
     description: 'Forbidden - User role required',
   })
   @Post()
-  create(@Body() createGenreDto: CreateGenreDto): Promise<Genre> {
+  create(@Body() createGenreDto: CreateGenreDto): Promise<GenreEntity> {
     return this.genresService.create(createGenreDto);
   }
 
@@ -132,7 +132,7 @@ export class GenresController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Genre successfully updated',
-    type: Genre,
+    type: GenreEntity,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -154,7 +154,7 @@ export class GenresController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateGenreDto: UpdateGenreDto,
-  ): Promise<Genre> {
+  ): Promise<GenreEntity> {
     return this.genresService.update(id, updateGenreDto);
   }
 

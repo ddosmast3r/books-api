@@ -6,9 +6,9 @@ import {
   JoinTable,
   CreateDateColumn,
 } from 'typeorm';
-import { Genre } from '../genres/genre.entity';
+import { GenreEntity } from '../genres/genre.entity';
 import { BaseEntity } from '../common/entities/base.entity';
-import { Author } from '../authors/author.entity';
+import { AuthorEntity } from '../authors/author.entity';
 
 @Entity('books')
 export class BookEntity extends BaseEntity {
@@ -16,18 +16,18 @@ export class BookEntity extends BaseEntity {
   @Column()
   title: string;
 
-  @ManyToMany(() => Genre, (genre: Genre): string => genre.name)
+  @ManyToMany(() => GenreEntity, (genre: GenreEntity): string => genre.name)
   @JoinTable()
-  genres: Genre[];
+  genres: GenreEntity[];
 
-  @ManyToMany(() => Author, (author: Author): string => author.fullName)
+  @ManyToMany(
+    () => AuthorEntity,
+    (authors: AuthorEntity): string => authors.fullName,
+  )
   @JoinTable()
   @Column()
-  author: Author;
+  authors: AuthorEntity[];
 
-  @Column()
-  year: number;
-  @CreateDateColumn()
   @Column()
   description: string;
 
