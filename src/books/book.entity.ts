@@ -4,7 +4,6 @@ import {
   Column,
   ManyToMany,
   JoinTable,
-  CreateDateColumn,
 } from 'typeorm';
 import { GenreEntity } from '../genres/genre.entity';
 import { BaseEntity } from '../common/entities/base.entity';
