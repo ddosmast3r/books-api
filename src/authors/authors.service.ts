@@ -7,7 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FilterAuthorsDto } from './dto/filter-authors.dto';
 
-
 @Injectable()
 export class AuthorsService {
   constructor(
@@ -48,7 +47,8 @@ export class AuthorsService {
       });
     }
 
-    const sortField = sortBy === 'name' ? 'author.fullName' : `author.${sortBy}`;
+    const sortField =
+      sortBy === 'name' ? 'author.fullName' : `author.${sortBy}`;
     queryBuilder.orderBy(sortField, order.toUpperCase() as 'ASC' | 'DESC');
 
     queryBuilder.skip((page - 1) * limit);
@@ -75,7 +75,10 @@ export class AuthorsService {
     return author;
   }
 
-  async update(id: number, updateAuthorDto: UpdateAuthorDto): Promise<AuthorEntity> {
+  async update(
+    id: number,
+    updateAuthorDto: UpdateAuthorDto,
+  ): Promise<AuthorEntity> {
     const author = await this.authorRepository.preload({
       id,
       ...updateAuthorDto,

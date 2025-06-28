@@ -43,7 +43,7 @@ export class CreateBookDto {
   @IsNotEmpty()
   @IsOptional()
   @IsString()
-  langue: string;
+  language: string;
 
   @ApiProperty({
     description: 'Number of pages in the book',
