@@ -1,21 +1,15 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { AuthorEntity } from '../../authors/author.entity';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsIn, IsOptional } from "class-validator";
+import { BasePaginateQueryDto } from '../../common/dto/base-paginate-query.dto';
 
-export class FilterBookDto {
+export class FilterBookDto extends BasePaginateQueryDto {
+  @ApiProperty({
+    description: "Field to sort by (specific for books: 'title', 'publicationDate', 'createdAt')",
+    required: false,
+    enum: ['title', 'publicationDate', 'createdAt'],
+    default: 'createdAt',
+  })
   @IsOptional()
-  @IsString()
-  title: string;
-  authors: AuthorEntity[];
-
-  @IsOptional()
-  @IsString()
-  category: string;
-
-  @IsOptional()
-  @IsNumber()
-  min_year: number;
-
-  @IsOptional()
-  @IsNumber()
-  max_year: number;
+  @IsIn(['title', 'publicationDate', 'createdAt'])
+  sortBy?: 'title' | 'publicationDate' | 'createdAt' = 'createdAt';
 }
