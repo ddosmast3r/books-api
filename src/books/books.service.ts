@@ -19,7 +19,7 @@ export class BooksService {
       title: createBookDto.title,
       description: createBookDto.description,
       publicationDate: createBookDto.publishedDate,
-      language: createBookDto.language,
+      language: createBookDto.search,
       pages: createBookDto.pages,
     });
 
@@ -27,7 +27,13 @@ export class BooksService {
   }
 
   findAll(filterBookDto: FilterBookDto): Promise<PaginatedBooksDto> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', order = 'DESC' } = filterBookDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'createdAt',
+      order = 'DESC',
+    } = filterBookDto;
 
     let query = this.bookRepository.createQueryBuilder('book');
 
@@ -52,14 +58,13 @@ export class BooksService {
     const books = await query.getMany();
     const total = await query.getCount();
 
-  return {
-    data: books,
-    total: total,
-    page: page,
-    limit: limit,
-    lastPage: Math.ceil(total / limit)
-  };
-
+    return {
+      data: books,
+      total: total,
+      page: page,
+      limit: limit,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: number) {
@@ -72,13 +77,16 @@ export class BooksService {
   }
 
   async update(id: string, updateBookDto: UpdateBookDto) {
-    const book = await this.bookRepository.preload({
-      id,
-      ...updateBookDto,
-    });
+    return `Book ${id} - ${updateBookDto.title}`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} book`;
+  async deleteBook(id: string) : Promise<BookEntity> {
+    const book = await this.bookRepository.findOne({ where?: { id } });
+
+    if (!book) {
+      throw new NotFoundException('Book not found');
+    }
+
+    await this.bookRepository.delete(id);
   }
 }

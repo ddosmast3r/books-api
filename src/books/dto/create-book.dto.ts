@@ -37,13 +37,13 @@ export class CreateBookDto {
   publishedDate: Date;
 
   @ApiProperty({
-    description: 'The language in which the book is written',
-    example: 'English',
+    description: 'Find books by published',
+    example: 'The Book 30-06-2025',
   })
   @IsNotEmpty()
   @IsOptional()
   @IsString()
-  language: string;
+  search: string;
 
   @ApiProperty({
     description: 'Number of pages in the book',
@@ -56,4 +56,13 @@ export class CreateBookDto {
 
   @IsNumber()
   genres: string[];
+
+  @ApiProperty({
+    description: 'Limit of pages in the book',
+    example: '350',
+  })
+  @IsNotEmpty()
+  @IsOptional()
+  @IsNumber()
+  limit: number;
 }

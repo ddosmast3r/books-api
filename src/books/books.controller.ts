@@ -5,7 +5,7 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  Delete, Put,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -54,10 +54,16 @@ export class BooksController {
     return this.booksService.update(+id, updateBookDto);
   }
 
+  @ApiOperation({ summary: 'Update a book' })
+  @ApiBody({ type: UpdateBookDto, description: 'Update a book' })
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+    return this.booksService.update(id, updateBookDto);
+  }
+
   @ApiOperation({ summary: 'Delete a book' })
-  @ApiBody({ type : FilterBookDto, description: 'Filter books data' })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.booksService.remove(+id);
+  async deleteBook(@Param('id') id: string) {
+    return await this.booksService.deleteBook(id)
   }
 }
