@@ -89,10 +89,12 @@ export class GenresService {
     return this.genreRepository.save(updatedGenre);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<GenreEntity> {
     const genre = await this.findOne(id);
 
     await this.genreRepository.remove(genre);
+    
+    return genre;
   }
 
   private generateSlug(name: string): string {

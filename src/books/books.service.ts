@@ -15,18 +15,16 @@ export class BooksService {
   ) {}
 
   async create(createBookDto: CreateBookDto): Promise<BookEntity> {
-    const book = this.bookRepository.create({
+    return this.bookRepository.save({
       title: createBookDto.title,
       description: createBookDto.description,
       publicationDate: createBookDto.publishedDate,
-      language: createBookDto.search,
+      language: createBookDto.language,
       pages: createBookDto.pages,
     });
-
-    return this.bookRepository.save(book);
   }
 
-  findAll(filterBookDto: FilterBookDto): Promise<PaginatedBooksDto> {
+  async findAll(filterBookDto: FilterBookDto): Promise<PaginatedBooksDto> {
     const {
       page = 1,
       limit = 10,
@@ -73,20 +71,32 @@ export class BooksService {
     if (!book) {
       throw new NotFoundException('Book not found');
     }
+
     return book;
   }
 
-  async update(id: string, updateBookDto: UpdateBookDto) {
-    return `Book ${id} - ${updateBookDto.title}`;
+  async update(id: number, updateBookDto: UpdateBookDto): Promise<BookEntity> {
+    const book = await this.bookRepository.preload({
+      id,
+      ...updateBookDto,
+    });
+
+    if (!book) {
+      throw new NotFoundException('Book not found');
+    }
+
+    return this.bookRepository.save(book);
   }
 
-  async deleteBook(id: string) : Promise<BookEntity> {
-    const book = await this.bookRepository.findOne({ where?: { id } });
+  async deleteBook(id: number): Promise<BookEntity> {
+    const book = await this.bookRepository.findOne({ where: { id } });
 
     if (!book) {
       throw new NotFoundException('Book not found');
     }
 
     await this.bookRepository.delete(id);
+
+    return book;
   }
 }
