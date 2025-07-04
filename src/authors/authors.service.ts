@@ -4,7 +4,7 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 import { AuthorEntity } from './author.entity';
 import slugify from 'slugify';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { FilterAuthorsDto } from './dto/filter-authors.dto';
 
 @Injectable()
@@ -63,6 +63,12 @@ export class AuthorsService {
       limit,
       lastPage: Math.ceil(total / limit),
     };
+  }
+
+  async findAuthorsById(authorIDs: number[]): Promise<AuthorEntity[]> {
+    return this.authorRepository.find({
+      where: { id: In(authorIDs) },
+    });
   }
 
   async findOne(id: number) {

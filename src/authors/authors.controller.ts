@@ -32,7 +32,7 @@ export class AuthorsController {
     type: AuthorEntity,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createAuthorDto: CreateAuthorDto): Promise<AuthorEntity> {
     return this.authorsService.create(createAuthorDto);

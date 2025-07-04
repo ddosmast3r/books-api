@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { GenreEntity } from './genre.entity';
 import { UpdateGenreDto } from './dto/update-genre.dto';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { FilterGenresDto } from './dto/filter-genres.dto';
 import { PaginatedGenresDto } from './dto/paginated-genres.dto';
-import { Like } from 'typeorm';
+import { AuthorEntity } from '../authors/author.entity';
 
 @Injectable()
 export class GenresService {
@@ -72,7 +72,10 @@ export class GenresService {
     return this.genreRepository.save(genre);
   }
 
-  async update(id: number, updateGenreDto: UpdateGenreDto): Promise<GenreEntity> {
+  async update(
+    id: number,
+    updateGenreDto: UpdateGenreDto,
+  ): Promise<GenreEntity> {
     const genre = await this.findOne(id);
 
     const dataToUpdate = { ...updateGenreDto };
@@ -93,17 +96,23 @@ export class GenresService {
     const genre = await this.findOne(id);
 
     await this.genreRepository.remove(genre);
-    
+
     return genre;
+  }
+
+  async findGenresById(genresIDs: number[]): Promise<GenreEntity[]> {
+    return this.genreRepository.find({
+      where: { id: In(genresIDs) },
+    });
   }
 
   private generateSlug(name: string): string {
     return name
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-') 
-      .replace(/-+/g, '-') 
-      .replace(/^-+|-+$/g, '') 
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '')
       .trim();
   }
 }

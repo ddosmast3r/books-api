@@ -32,4 +32,4 @@ export class CreateGenreDto {
   @IsOptional()
   @IsString({ message: 'Description must be a string' })
   description?: string;
-} 
+}

@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
-import { GenreEntity } from 'src/genres/genre.entity';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsArray,
+  IsInt,
+} from 'class-validator';
 
 export class CreateBookDto {
   @ApiProperty({
@@ -10,6 +16,15 @@ export class CreateBookDto {
   @IsNotEmpty()
   @IsString()
   title: string;
+
+  @ApiProperty({
+    description: 'Author IDs',
+    example: [1],
+  })
+  @IsNotEmpty()
+  @IsArray()
+  @IsInt({ each: true })
+  authorsIds: number[];
 
   @ApiProperty({
     description: 'Author',
@@ -55,8 +70,13 @@ export class CreateBookDto {
   @IsNumber()
   pages: number;
 
-  @IsNumber()
-  genres: GenreEntity[];
+  @ApiProperty({
+    description: 'Genre IDs',
+    example: 1,
+  })
+  @IsArray()
+  @IsInt({ each: true })
+  genreIds: number[];
 
   @ApiProperty({
     description: 'Limit of pages in the book',

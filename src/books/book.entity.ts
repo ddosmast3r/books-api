@@ -19,12 +19,8 @@ export class BookEntity extends BaseEntity {
   @JoinTable()
   genres: GenreEntity[];
 
-  @ManyToMany(
-    () => AuthorEntity,
-    (authors: AuthorEntity): string => authors.fullName,
-  )
+  @ManyToMany(() => AuthorEntity, (authors: AuthorEntity): number => authors.id)
   @JoinTable()
-  @Column()
   authors: AuthorEntity[];
 
   @Column()

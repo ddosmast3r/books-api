@@ -4,7 +4,6 @@ import { RegisterDto } from './dto/register.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponseDto } from './login-response.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -35,16 +34,16 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @ApiBody({ type: RefreshTokenDto, description: 'Refresh token data' })
-  @ApiOperation({ summary: 'Refresh access and refresh tokens' })
-  @ApiResponse({
-    status: 201,
-    description: 'Access and refresh tokens refreshed successfully',
-    type: LoginResponseDto,
-  })
-  @ApiResponse({ status: 401, description: 'Invalid refresh token' })
-  @Post('refresh')
-  async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
-    return this.authService.refreshToken(refreshTokenDto.refresh_token);
-  }
+  // @ApiBody({ type: RefreshTokenDto, description: 'Refresh token data' })
+  // @ApiOperation({ summary: 'Refresh access and refresh tokens' })
+  // @ApiResponse({
+  //   status: 201,
+  //   description: 'Access and refresh tokens refreshed successfully',
+  //   type: LoginResponseDto,
+  // })
+  // @ApiResponse({ status: 401, description: 'Invalid refresh token' })
+  // @Post('refresh')
+  // async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
+  //   return this.authService.refreshToken(refreshTokenDto.refresh_token);
+  // }
 }

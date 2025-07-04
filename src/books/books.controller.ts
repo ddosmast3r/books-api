@@ -6,12 +6,14 @@ import {
   Param,
   Delete,
   Put,
+  Query,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BookEntity } from './book.entity';
+import { FilterBookDto } from './dto/filter-book.dto';
 
 @Controller('books')
 @ApiTags('books')
@@ -37,10 +39,10 @@ export class BooksController {
     status: 201,
     description: 'Get a list of all books',
   })
-  @ApiResponse({ status: 401, description: 'Something went wrong.' })
   @Get()
-  findAll() {
-    return this.booksService.findAll();
+  @ApiResponse({ status: 401, description: 'Something went wrong.' })
+  findAll(@Body() filterBookDto: FilterBookDto) {
+    return this.booksService.findAll(filterBookDto);
   }
 
   @ApiOperation({ summary: 'Get book by id' })

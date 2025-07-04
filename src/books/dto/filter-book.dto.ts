@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsIn,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { BasePaginateQueryDto } from '../../common/dto/base-paginate-query.dto';
 
 export class FilterBookDto extends BasePaginateQueryDto {
@@ -16,7 +23,7 @@ export class FilterBookDto extends BasePaginateQueryDto {
 
   @ApiProperty({
     description: 'Filter by genre',
-    example: "'sci-fi'",
+    example: 'sci-fi',
     required: false,
   })
   @IsOptional()
@@ -25,7 +32,7 @@ export class FilterBookDto extends BasePaginateQueryDto {
 
   @ApiProperty({
     description: 'Filter by language',
-    example: "'russian'",
+    example: 'ru',
     required: false,
   })
   @IsOptional()
@@ -34,10 +41,35 @@ export class FilterBookDto extends BasePaginateQueryDto {
 
   @ApiProperty({
     description: 'Filter by publication date',
-    example: "'2025'",
+    example: '2025',
     required: false,
   })
   @IsOptional()
   @IsNumber()
   publicationDate?: number;
+
+  @ApiProperty({
+    description: 'Filter by publicationDate',
+  })
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  authorIds?: number[];
+
+  @ApiProperty({
+    description: 'Filter by genres',
+  })
+  @IsArray()
+  @IsInt({ each: true })
+  genreIds?: number[];
 }
+
+//   @ApiProperty({
+//     description: 'Order',
+//     required: true,
+//   })
+//   @IsNumber()
+//   order?: number;
+// }
+
+// todo: добавить order
