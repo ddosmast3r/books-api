@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { languageCodes } from '../../iso-639-1/data';
 import {
   IsNotEmpty,
   IsOptional,
@@ -6,6 +7,7 @@ import {
   IsNumber,
   IsArray,
   IsInt,
+  IsIn,
 } from 'class-validator';
 
 export class CreateBookDto {
@@ -59,6 +61,7 @@ export class CreateBookDto {
   @IsNotEmpty()
   @IsOptional()
   @IsString()
+  @IsIn(languageCodes)
   language: string;
 
   @ApiProperty({
