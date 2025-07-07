@@ -25,6 +25,7 @@ export class BooksService {
     const genres = await this.genreRepository.findGenresById(
       createBookDto.genreIds,
     );
+
     return this.bookRepository.save({
       title: createBookDto.title,
       description: createBookDto.description,

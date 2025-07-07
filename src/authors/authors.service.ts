@@ -4,8 +4,9 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 import { AuthorEntity } from './author.entity';
 import slugify from 'slugify';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { FilterAuthorsDto } from './dto/filter-authors.dto';
+import { AuthorsSortByEnum } from './authors.enum';
 
 @Injectable()
 export class AuthorsService {
@@ -35,7 +36,7 @@ export class AuthorsService {
       page = 1,
       limit = 10,
       search,
-      sortBy = 'createdAt',
+      sortBy = AuthorsSortByEnum.CreatedAt,
       order = 'desc',
     } = filterAuthorsDto;
 
@@ -48,7 +49,9 @@ export class AuthorsService {
     }
 
     const sortField =
-      sortBy === 'name' ? 'author.fullName' : `author.${sortBy}`;
+      sortBy === AuthorsSortByEnum.Name
+        ? 'author.fullName'
+        : `author.${sortBy}`;
     queryBuilder.orderBy(sortField, order.toUpperCase() as 'ASC' | 'DESC');
 
     queryBuilder.skip((page - 1) * limit);

@@ -166,7 +166,7 @@ export class GenresController {
     description: 'Unauthorized',
   })
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<any> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<GenreEntity> {
     return this.genresService.remove(id);
   }
 }

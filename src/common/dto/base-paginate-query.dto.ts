@@ -53,4 +53,4 @@ export class BasePaginateQueryDto {
   @IsInt()
   @Min(1)
   limit?: number = 10;
-} 
+}

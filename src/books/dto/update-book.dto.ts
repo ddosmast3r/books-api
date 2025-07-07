@@ -8,7 +8,6 @@ import {
   Length,
 } from 'class-validator';
 import { GenreEntity } from '../../genres/genre.entity';
-import { AuthorEntity } from '../../authors/author.entity';
 
 export class UpdateBookDto extends PartialType(CreateBookDto) {
   @ApiPropertyOptional({
@@ -63,19 +62,18 @@ export class UpdateBookDto extends PartialType(CreateBookDto) {
   @IsArray()
   @Length(2, 20)
   @IsOptional()
-  genre: GenreEntity[];
+  genresIds?: GenreEntity[];
 
   @ApiPropertyOptional({
-    description: 'Author or authors of the book',
-    name: 'authors',
+    description: 'Author ID or authors of the book',
+    name: 'authorIDs',
     example: 'Bearer',
     minLength: 2,
-    maxLength: 100,
+    maxLength: 150,
   })
   @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  authors: AuthorEntity[];
+  @IsNumber({}, { each: true })
+  authorsIds?: number[];
 
   @ApiPropertyOptional({
     description: 'Date of book',
@@ -84,5 +82,5 @@ export class UpdateBookDto extends PartialType(CreateBookDto) {
   })
   @IsDate()
   @IsOptional()
-  date: Date;
+  publishedDate: Date;
 }

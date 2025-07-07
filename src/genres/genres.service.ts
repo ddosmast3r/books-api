@@ -6,7 +6,6 @@ import { UpdateGenreDto } from './dto/update-genre.dto';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { FilterGenresDto } from './dto/filter-genres.dto';
 import { PaginatedGenresDto } from './dto/paginated-genres.dto';
-import { AuthorEntity } from '../authors/author.entity';
 
 @Injectable()
 export class GenresService {
@@ -61,15 +60,16 @@ export class GenresService {
   }
 
   async create(createGenreDto: CreateGenreDto): Promise<GenreEntity> {
-    const genreData = { ...createGenreDto };
+    let slug = createGenreDto.slug || this.generateSlug(createGenreDto.name);
+    let name = createGenreDto.name;
 
-    if (!genreData.slug) {
-      genreData.slug = this.generateSlug(genreData.name);
+    let counter = 1;
+    while (await this.genreRepository.findOne({ where: { name } })) {
+      name = `${createGenreDto.name} (${counter++})`;
+      slug = this.generateSlug(name);
     }
 
-    const genre = this.genreRepository.create(genreData);
-
-    return this.genreRepository.save(genre);
+    return this.genreRepository.save({ name, slug });
   }
 
   async update(
@@ -78,11 +78,13 @@ export class GenresService {
   ): Promise<GenreEntity> {
     const genre = await this.findOne(id);
 
-    const dataToUpdate = { ...updateGenreDto };
-
-    if (dataToUpdate.name && !dataToUpdate.slug) {
-      dataToUpdate.slug = this.generateSlug(dataToUpdate.name);
-    }
+    const dataToUpdate = {
+      ...updateGenreDto,
+      slug:
+        updateGenreDto.name && updateGenreDto.slug
+          ? this.generateSlug(updateGenreDto.name)
+          : updateGenreDto.slug,
+    };
 
     const updatedGenre = {
       ...genre,

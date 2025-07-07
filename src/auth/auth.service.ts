@@ -9,8 +9,6 @@ import { RefreshTokenEntity } from './dto/refresh-token.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-// import { JwtConfigService } from './config/jwt.config';
-// import { AuthTokensDto } from './dto/auth-tokens.dto';
 
 @Injectable()
 export class AuthService {
@@ -56,35 +54,37 @@ export class AuthService {
     return { access_token, refresh_token };
   }
 
-  // async refreshToken(refreshToken: string): Promise<LoginResponseDto> {
-  //   try {
-  //     const payload = await this.jwtService.verifyAsync(refreshToken, {
-  //       secret: this.jwtConfigService.refreshSecret,
-  //     });
-  //
-  //     const tokenEntity = await this.refreshTokenRepository.findOne({
-  //       where: { token: refreshToken },
-  //     });
-  //
-  //     if (!tokenEntity) {
-  //       throw new UnauthorizedException('Invalid refresh token');
-  //     }
-  //
-  //     const user = await this.usersService.findById(payload.sub);
-  //
-  //     if (!user) {
-  //       throw new UnauthorizedException('User not found');
-  //     }
-  //
-  //     const tokens = await this.generateTokens(user);
-  //     await this.refreshTokenRepository.remove(tokenEntity);
-  //     await this.saveRefreshToken(user.id, tokens.refresh_token);
-  //
-  //     return { ...tokens, user };
-  //   } catch (error) {
-  //     throw new UnauthorizedException('Invalid refresh token');
-  //   }
-  // }
+  async refreshToken(refreshToken: string): Promise<LoginResponseDto> {
+    const refreshSecret =
+      this.configService.getOrThrow<string>('JWT_REFRESH_SECRET');
+    const payload = await this.jwtService.verifyAsync(refreshToken, {
+      secret: refreshSecret,
+    });
+
+    const tokenEntity = await this.refreshTokenRepository.findOne({
+      where: { token: refreshToken },
+    });
+
+    if (!tokenEntity) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const user = await this.usersService.findById(payload.sub);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const tokens = await this.generateTokens(user);
+    await this.refreshTokenRepository.remove(tokenEntity);
+    await this.saveRefreshToken(user.id, tokens.refresh_token);
+
+    return { ...tokens, user };
+  }
+
+  catch(error) {
+    throw new UnauthorizedException('Invalid refresh token');
+  }
 
   async register(registerDto: RegisterDto): Promise<LoginResponseDto> {
     const user = await this.usersService.create(registerDto);

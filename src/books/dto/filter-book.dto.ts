@@ -63,13 +63,3 @@ export class FilterBookDto extends BasePaginateQueryDto {
   @IsInt({ each: true })
   genreIds?: number[];
 }
-
-//   @ApiProperty({
-//     description: 'Order',
-//     required: true,
-//   })
-//   @IsNumber()
-//   order?: number;
-// }
-
-// todo: добавить order

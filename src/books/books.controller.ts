@@ -7,6 +7,7 @@ import {
   Delete,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -14,6 +15,8 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BookEntity } from './book.entity';
 import { FilterBookDto } from './dto/filter-book.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('books')
 @ApiTags('books')
@@ -28,6 +31,7 @@ export class BooksController {
     type: BookEntity,
   })
   @ApiResponse({ status: 401, description: 'Something went wrong.' })
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createBookDto: CreateBookDto) {
     return this.booksService.create(createBookDto);
@@ -39,8 +43,8 @@ export class BooksController {
     status: 201,
     description: 'Get a list of all books',
   })
-  @Get()
   @ApiResponse({ status: 401, description: 'Something went wrong.' })
+  @Get()
   findAll(@Body() filterBookDto: FilterBookDto) {
     return this.booksService.findAll(filterBookDto);
   }
@@ -71,6 +75,7 @@ export class BooksController {
   @ApiBody({})
   @ApiResponse({ status: 201, description: 'Delete a book' })
   @ApiResponse({ status: 401, description: 'Something went wrong.' })
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteBook(@Param('id') id: number) {
     return await this.booksService.deleteBook(id);

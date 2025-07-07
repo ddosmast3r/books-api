@@ -1,16 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsOptional } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 import { BasePaginateQueryDto } from '../../common/dto/base-paginate-query.dto';
+import { AuthorsSortByEnum } from '../authors.enum';
 
 export class FilterAuthorsDto extends BasePaginateQueryDto {
   @ApiProperty({
     description:
       "Field to sort by (specific for authors: 'name' or 'createdAt')",
     required: false,
-    enum: ['name', 'createdAt'],
-    default: 'createdAt',
+    enum: AuthorsSortByEnum,
+    default: AuthorsSortByEnum.CreatedAt,
   })
   @IsOptional()
-  @IsIn(['name', 'createdAt'])
-  sortBy?: 'name' | 'createdAt' = 'createdAt';
+  @IsEnum(AuthorsSortByEnum)
+  sortBy?: AuthorsSortByEnum = AuthorsSortByEnum.CreatedAt;
 }
