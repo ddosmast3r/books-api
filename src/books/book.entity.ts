@@ -29,7 +29,7 @@ export class BookEntity extends BaseEntity {
   @Column()
   publicationDate: Date;
 
-  @Column()
+  @Column({ type: 'varchar', length: 2 })
   language: string;
 
   @Column()

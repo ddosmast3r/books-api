@@ -6,7 +6,6 @@ import {
   Param,
   Delete,
   Put,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
@@ -15,7 +14,6 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BookEntity } from './book.entity';
 import { FilterBookDto } from './dto/filter-book.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('books')
