@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { GenreEntity } from './genre.entity';
@@ -6,6 +10,7 @@ import { UpdateGenreDto } from './dto/update-genre.dto';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { FilterGenresDto } from './dto/filter-genres.dto';
 import { PaginatedGenresDto } from './dto/paginated-genres.dto';
+import { generateUniqueSlug } from '../common/utilities/slug.generator';
 
 @Injectable()
 export class GenresService {
@@ -17,7 +22,6 @@ export class GenresService {
   async findAll(filterGenresDto: FilterGenresDto): Promise<PaginatedGenresDto> {
     const {
       search,
-      slug,
       sortBy = 'createdAt',
       order = 'desc',
       limit = 10,
@@ -33,10 +37,6 @@ export class GenresService {
         '(genre.name ILIKE :search OR genre.description ILIKE :search)',
         { search: `%${search}%` },
       );
-    }
-
-    if (slug) {
-      query.andWhere('genre.slug = :slug', { slug });
     }
 
     query.orderBy(`genre.${sortBy}`, order.toUpperCase() as 'ASC' | 'DESC');
@@ -60,16 +60,24 @@ export class GenresService {
   }
 
   async create(createGenreDto: CreateGenreDto): Promise<GenreEntity> {
-    let slug = createGenreDto.slug || this.generateSlug(createGenreDto.name);
-    let name = createGenreDto.name;
+    const slugGenre = generateUniqueSlug(createGenreDto.name, {
+      addRandom: false,
+    });
 
-    let counter = 1;
-    while (await this.genreRepository.findOne({ where: { name } })) {
-      name = `${createGenreDto.name} (${counter++})`;
-      slug = this.generateSlug(name);
+    const existingSlug = await this.genreRepository.findOne({
+      where: { slug: slugGenre },
+    });
+
+    if (existingSlug) {
+      throw new ConflictException('Genre is already exists');
     }
 
-    return this.genreRepository.save({ name, slug });
+    const genre = this.genreRepository.create({
+      name: createGenreDto.name,
+      description: createGenreDto.description,
+      slug: slugGenre,
+    });
+    return this.genreRepository.save(genre);
   }
 
   async update(
@@ -78,20 +86,28 @@ export class GenresService {
   ): Promise<GenreEntity> {
     const genre = await this.findOne(id);
 
-    const dataToUpdate = {
-      ...updateGenreDto,
-      slug:
-        updateGenreDto.name && updateGenreDto.slug
-          ? this.generateSlug(updateGenreDto.name)
-          : updateGenreDto.slug,
-    };
+    if (!genre) {
+      throw new NotFoundException(`Genre with ID ${id} not found`);
+    }
 
-    const updatedGenre = {
-      ...genre,
-      ...dataToUpdate,
-    };
+    if (updateGenreDto.name && updateGenreDto.name !== genre.name) {
+      const existingGenre = await this.genreRepository.findOne({
+        where: { name: updateGenreDto.name },
+      });
+      if (existingGenre && existingGenre.id !== genre.id) {
+        throw new ConflictException('Genre with this name already exists');
+      }
+      genre.name = updateGenreDto.name;
+      genre.slug = generateUniqueSlug(updateGenreDto.name, {
+        addRandom: false,
+      });
+    }
 
-    return this.genreRepository.save(updatedGenre);
+    if (updateGenreDto.description !== undefined) {
+      genre.description = updateGenreDto.description;
+    }
+
+    return this.genreRepository.save(genre);
   }
 
   async remove(id: number): Promise<GenreEntity> {
@@ -106,15 +122,5 @@ export class GenresService {
     return this.genreRepository.find({
       where: { id: In(genresIDs) },
     });
-  }
-
-  private generateSlug(name: string): string {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .trim();
   }
 }

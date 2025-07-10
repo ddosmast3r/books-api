@@ -1,13 +1,14 @@
 import { ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import { CreateBookDto } from './create-book.dto';
 import {
-  IsArray, IsDate,
+  IsArray,
+  IsDate,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
   Length,
 } from 'class-validator';
-import { GenreEntity } from '../../genres/genre.entity';
 
 export class UpdateBookDto extends PartialType(CreateBookDto) {
   @ApiPropertyOptional({
@@ -18,7 +19,7 @@ export class UpdateBookDto extends PartialType(CreateBookDto) {
     maxLength: 100,
   })
   @IsString()
-  @Length(1, 100)
+  @Length(2, 100)
   title: string;
 
   @ApiPropertyOptional({
@@ -29,18 +30,17 @@ export class UpdateBookDto extends PartialType(CreateBookDto) {
     maxLength: 500,
   })
   @IsString()
-  @Length(1, 500)
+  @Length(2, 500)
   description: string;
 
   @ApiPropertyOptional({
-    description: 'Language of the book',
-    name: 'language',
-    example: 'English',
+    description: 'Language of the book (ISO 639-1)',
+    example: 'en',
     minLength: 2,
-    maxLength: 50,
+    maxLength: 2,
   })
   @IsString()
-  @Length(1, 50)
+  @Length(2, 2)
   @IsOptional()
   language: string;
 
@@ -53,27 +53,27 @@ export class UpdateBookDto extends PartialType(CreateBookDto) {
   pages: number;
 
   @ApiPropertyOptional({
-    description: 'Genre of the book',
-    name: 'genre',
-    example: 'Sci-fi',
+    description: 'Genres of the book',
+    name: 'genres',
+    example: [1],
     minLength: 2,
-    maxLength: 20,
+    maxLength: 50,
   })
   @IsArray()
-  @Length(2, 20)
+  @IsInt({ each: true })
   @IsOptional()
-  genresIds?: GenreEntity[];
+  genreIds: number[];
 
   @ApiPropertyOptional({
     description: 'Author ID or authors of the book',
     name: 'authorIDs',
-    example: 'Bearer',
+    example: [1],
     minLength: 2,
     maxLength: 150,
   })
   @IsArray()
-  @IsNumber({}, { each: true })
-  authorsIds?: number[];
+  @IsInt({ each: true })
+  authorIds: number[];
 
   @ApiPropertyOptional({
     description: 'Date of book',

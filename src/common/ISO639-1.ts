@@ -1,4 +1,4 @@
-export const languageCodes = [
+export const ISO6391LanguageCodes = [
   'aa', // Afar
   'ab', // Abkhazian
   'ae', // Avestan

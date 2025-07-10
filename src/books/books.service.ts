@@ -8,11 +8,13 @@ import { FilterBookDto } from './dto/filter-book.dto';
 import { PaginatedBooksDto } from './dto/paginated-book.dto';
 import { AuthorsService } from '../authors/authors.service';
 import { GenresService } from '../genres/genres.service';
+import { generateUniqueSlug } from '../common/utilities/slug.generator';
 
 @Injectable()
 export class BooksService {
   constructor(
     @InjectRepository(BookEntity)
+
     private readonly bookRepository: Repository<BookEntity>,
     private readonly authorService: AuthorsService,
     private readonly genreRepository: GenresService,
@@ -20,11 +22,21 @@ export class BooksService {
 
   async create(createBookDto: CreateBookDto): Promise<BookEntity> {
     const authors = await this.authorService.findAuthorsById(
-      createBookDto.authorsIds,
+      createBookDto.authorIds,
     );
+
+    if (!authors.length) {
+      throw new NotFoundException('Authors not found');
+    }
     const genres = await this.genreRepository.findGenresById(
       createBookDto.genreIds,
     );
+
+    if (!genres.length) {
+      throw new NotFoundException('Genre not found');
+    }
+
+    const slug = generateUniqueSlug(createBookDto.title);
 
     return this.bookRepository.save({
       title: createBookDto.title,
@@ -34,6 +46,7 @@ export class BooksService {
       pages: createBookDto.pages,
       authors,
       genres,
+      slug,
     });
   }
 
@@ -59,30 +72,22 @@ export class BooksService {
     query.leftJoinAndSelect('book.genres', 'genres');
 
     if (genreIds) {
-      query.where('genres.id IN (:...genreIds)', {
+      query.andWhere('genres.id IN (:...genreIds)', {
         genreIds: genreIds,
       });
     }
 
     if (search) {
-      query.where('book.title ILIKE :search', { search: `%${search}%` });
+      query.andWhere('book.title ILIKE :search', { search: `%${search}%` });
     }
+    const sortOrder = order.toUpperCase() as 'ASC' | 'DESC';
 
-    if (sortBy === 'title') {
-      query = query.orderBy(
-        'book.title',
-        order.toUpperCase() as 'ASC' | 'DESC',
-      );
-    } else if (sortBy === 'publicationDate') {
-      query = query.orderBy(
-        'book.publicationDate',
-        order.toUpperCase() as 'ASC' | 'DESC',
-      );
+    if ((sortBy as string) === 'title') {
+      query = query.orderBy('book.title', sortOrder);
+    } else if ((sortBy as string) === 'publicationDate') {
+      query = query.orderBy('book.publicationDate', sortOrder);
     } else {
-      query = query.orderBy(
-        'book.createdAt',
-        order.toUpperCase() as 'ASC' | 'DESC',
-      );
+      query = query.orderBy('book.createdAt', sortOrder);
     }
 
     const skip = (page - 1) * limit;
@@ -120,17 +125,43 @@ export class BooksService {
       throw new NotFoundException('Book not found');
     }
 
-    return this.bookRepository.save(book);
+    const authors = await this.authorService.findAuthorsById(
+      updateBookDto.authorIds,
+    );
+
+    if (!authors) {
+      throw new NotFoundException('Authors not found');
+    }
+
+    const genres = await this.genreRepository.findGenresById(
+      updateBookDto.genreIds,
+    );
+
+    if (!genres.length) {
+      throw new NotFoundException('Genres not found');
+    }
+
+    const slug = generateUniqueSlug(updateBookDto.title);
+
+    return this.bookRepository.save({
+      title: updateBookDto.title,
+      description: updateBookDto.description,
+      publicationDate: updateBookDto.publishedDate,
+      language: updateBookDto.language,
+      pages: updateBookDto.pages,
+      authors,
+      genres,
+      slug,
+    });
   }
 
-  async deleteBook(id: number): Promise<BookEntity> {
+  async remove(id: number): Promise<BookEntity> {
     const book = await this.bookRepository.findOne({ where: { id } });
 
     if (!book) {
       throw new NotFoundException('Book not found');
     }
-    await this.bookRepository.delete(id);
-
+    await this.bookRepository.remove(book);
     return book;
   }
 }

@@ -17,6 +17,7 @@ import {
   ApiResponse,
   ApiBody,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { GenresService } from './genres.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
@@ -29,6 +30,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Genres')
 @Controller('genres')
+@ApiBearerAuth('access-token')
 export class GenresController {
   constructor(private readonly genresService: GenresService) {}
 
@@ -65,7 +67,6 @@ export class GenresController {
     return this.genresService.findOne(id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Create new genre' })
   @ApiBody({
     type: CreateGenreDto,
@@ -75,7 +76,6 @@ export class GenresController {
         summary: 'Genre creation example',
         value: {
           name: 'Science Fiction',
-          slug: 'science-fiction',
           description: 'Science fiction and fantasy literature',
         },
       },
@@ -94,12 +94,12 @@ export class GenresController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Unauthorized',
   })
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   create(@Body() createGenreDto: CreateGenreDto): Promise<GenreEntity> {
     return this.genresService.create(createGenreDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Update genre' })
   @ApiParam({
     name: 'id',
@@ -137,6 +137,7 @@ export class GenresController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Unauthorized',
   })
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -145,7 +146,6 @@ export class GenresController {
     return this.genresService.update(id, updateGenreDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Delete genre' })
   @ApiParam({
     name: 'id',
@@ -165,6 +165,7 @@ export class GenresController {
     status: HttpStatus.UNAUTHORIZED,
     description: 'Unauthorized',
   })
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number): Promise<GenreEntity> {
     return this.genresService.remove(id);

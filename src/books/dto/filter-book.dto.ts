@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
-  IsIn,
+  IsDate,
+  IsEnum,
   IsInt,
-  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
+import { selectedFieldsEnum } from '../books.enum';
 import { BasePaginateQueryDto } from '../../common/dto/base-paginate-query.dto';
 
 export class FilterBookDto extends BasePaginateQueryDto {
@@ -14,21 +15,13 @@ export class FilterBookDto extends BasePaginateQueryDto {
     description:
       "Field to sort by (specific for books: 'title', 'publicationDate', 'createdAt')",
     required: false,
-    enum: ['title', 'publicationDate', 'createdAt'],
+    example: selectedFieldsEnum.createdAt,
+    enum: selectedFieldsEnum,
     default: 'createdAt',
   })
   @IsOptional()
-  @IsIn(['title', 'publicationDate', 'createdAt'])
-  sortBy?: 'title' | 'publicationDate' | 'createdAt' = 'createdAt';
-
-  @ApiProperty({
-    description: 'Filter by genre',
-    example: 'sci-fi',
-    required: false,
-  })
-  @IsOptional()
-  @IsString()
-  genre?: string;
+  @IsEnum(selectedFieldsEnum)
+  sortBy?: selectedFieldsEnum = selectedFieldsEnum.createdAt;
 
   @ApiProperty({
     description: 'Filter by language',
@@ -45,11 +38,12 @@ export class FilterBookDto extends BasePaginateQueryDto {
     required: false,
   })
   @IsOptional()
-  @IsNumber()
-  publicationDate?: number;
+  @IsDate()
+  publicationDate?: Date;
 
   @ApiProperty({
-    description: 'Filter by publicationDate',
+    description: 'Filter by array of author IDs',
+    example: [1],
   })
   @IsOptional()
   @IsArray()
@@ -57,7 +51,8 @@ export class FilterBookDto extends BasePaginateQueryDto {
   authorIds?: number[];
 
   @ApiProperty({
-    description: 'Filter by genres',
+    description: 'Filter by array of genres IDs',
+    example: [1],
   })
   @IsArray()
   @IsInt({ each: true })

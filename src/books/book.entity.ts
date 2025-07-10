@@ -11,11 +11,10 @@ import { AuthorEntity } from '../authors/author.entity';
 
 @Entity('books')
 export class BookEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
   @Column()
   title: string;
 
-  @ManyToMany(() => GenreEntity, (genre: GenreEntity): string => genre.name)
+  @ManyToMany(() => GenreEntity, (genres: GenreEntity): number => genres.id)
   @JoinTable()
   genres: GenreEntity[];
 
@@ -34,4 +33,7 @@ export class BookEntity extends BaseEntity {
 
   @Column()
   pages: number;
+
+  @Column()
+  slug: string;
 }

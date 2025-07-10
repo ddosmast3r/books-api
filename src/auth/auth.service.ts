@@ -14,6 +14,7 @@ import { ConfigService } from '@nestjs/config';
 export class AuthService {
   constructor(
     @InjectRepository(RefreshTokenEntity)
+
     private refreshTokenRepository: Repository<RefreshTokenEntity>,
     private usersService: UsersService,
     private jwtService: JwtService,
@@ -55,17 +56,15 @@ export class AuthService {
   }
 
   async refreshToken(refreshToken: string): Promise<LoginResponseDto> {
-    const refreshSecret =
-      this.configService.getOrThrow<string>('JWT_REFRESH_SECRET');
     const payload = await this.jwtService.verifyAsync(refreshToken, {
-      secret: refreshSecret,
+      secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
     });
 
-    const tokenEntity = await this.refreshTokenRepository.findOne({
+    const foundRefreshToken = await this.refreshTokenRepository.findOne({
       where: { token: refreshToken },
     });
 
-    if (!tokenEntity) {
+    if (!foundRefreshToken) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
@@ -76,7 +75,7 @@ export class AuthService {
     }
 
     const tokens = await this.generateTokens(user);
-    await this.refreshTokenRepository.remove(tokenEntity);
+    await this.refreshTokenRepository.remove(foundRefreshToken);
     await this.saveRefreshToken(user.id, tokens.refresh_token);
 
     return { ...tokens, user };

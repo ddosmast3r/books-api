@@ -2,11 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 import { AuthorEntity } from './author.entity';
-import slugify from 'slugify';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { FilterAuthorsDto } from './dto/filter-authors.dto';
 import { AuthorsSortByEnum } from './authors.enum';
+import { generateUniqueSlug } from '../common/utilities/slug.generator';
 
 @Injectable()
 export class AuthorsService {
@@ -17,7 +17,7 @@ export class AuthorsService {
 
   async create(createAuthorDto: CreateAuthorDto): Promise<AuthorEntity> {
     const fullName = this.generateFullName(createAuthorDto);
-    const slug = this.generateSlug(fullName);
+    const slug = generateUniqueSlug(fullName);
 
     const author = this.authorRepository.create({
       firstName: createAuthorDto.firstName,
@@ -105,7 +105,7 @@ export class AuthorsService {
       ].some((value) => value !== undefined)
     ) {
       author.fullName = this.generateFullName(author);
-      author.slug = this.generateSlug(author.fullName);
+      author.slug = generateUniqueSlug(author.fullName);
     }
 
     return this.authorRepository.save(author);
@@ -126,9 +126,5 @@ export class AuthorsService {
     return `${authorData.firstName} ${
       authorData.middleName ? authorData.middleName + ' ' : ''
     }${authorData.lastName}`;
-  }
-
-  private generateSlug(fullName: string): string {
-    return slugify(fullName, { lower: true });
   }
 }
