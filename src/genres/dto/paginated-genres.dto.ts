@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { GenreEntity } from '../genre.entity';
 import { BasePaginatedResponseDto } from '../../common/dto/base-paginated-response.dto';
+import { IsArray, IsString } from 'class-validator';
 
 export class PaginatedGenresDto extends BasePaginatedResponseDto {
   @ApiProperty({
@@ -17,5 +18,7 @@ export class PaginatedGenresDto extends BasePaginatedResponseDto {
       },
     ],
   })
+  @IsArray()
+  @IsString({ each: true })
   genres: GenreEntity[];
 }
