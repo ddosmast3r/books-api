@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
-import { isCryptoKey } from 'util/types';
 
 export class AuthTokensDto {
   @ApiProperty({

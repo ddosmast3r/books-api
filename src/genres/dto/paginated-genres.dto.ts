@@ -5,6 +5,7 @@ import { IsArray, IsString } from 'class-validator';
 
 export class PaginatedGenresDto extends BasePaginatedResponseDto {
   @ApiProperty({
+    isArray: true,
     description: 'Array of genres for the current page',
     type: [GenreEntity],
     example: [
