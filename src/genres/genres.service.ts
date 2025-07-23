@@ -1,12 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { GenreEntity } from './genre.entity';
 import { UpdateGenreDto } from './dto/update-genre.dto';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { FilterGenresDto } from './dto/filter-genres.dto';
 import { PaginatedGenresDto } from './dto/paginated-genres.dto';
-import { Like } from 'typeorm';
+import { generateUniqueSlug } from '../common/utilities/slug.generator';
 
 @Injectable()
 export class GenresService {
@@ -18,7 +22,6 @@ export class GenresService {
   async findAll(filterGenresDto: FilterGenresDto): Promise<PaginatedGenresDto> {
     const {
       search,
-      slug,
       sortBy = 'createdAt',
       order = 'desc',
       limit = 10,
@@ -34,10 +37,6 @@ export class GenresService {
         '(genre.name ILIKE :search OR genre.description ILIKE :search)',
         { search: `%${search}%` },
       );
-    }
-
-    if (slug) {
-      query.andWhere('genre.slug = :slug', { slug });
     }
 
     query.orderBy(`genre.${sortBy}`, order.toUpperCase() as 'ASC' | 'DESC');
@@ -61,47 +60,67 @@ export class GenresService {
   }
 
   async create(createGenreDto: CreateGenreDto): Promise<GenreEntity> {
-    const genreData = { ...createGenreDto };
+    const slugGenre = generateUniqueSlug(createGenreDto.name, {
+      addRandom: false,
+    });
 
-    if (!genreData.slug) {
-      genreData.slug = this.generateSlug(genreData.name);
+    const existingSlug = await this.genreRepository.findOne({
+      where: { slug: slugGenre },
+    });
+
+    if (existingSlug) {
+      throw new ConflictException('Genre is already exists');
     }
 
-    const genre = this.genreRepository.create(genreData);
+    const genre = this.genreRepository.create({
+      name: createGenreDto.name,
+      description: createGenreDto.description,
+      slug: slugGenre,
+    });
+    return this.genreRepository.save(genre);
+  }
+
+  async update(
+    id: number,
+    updateGenreDto: UpdateGenreDto,
+  ): Promise<GenreEntity> {
+    const genre = await this.findOne(id);
+
+    if (!genre) {
+      throw new NotFoundException(`Genre with ID ${id} not found`);
+    }
+
+    if (updateGenreDto.name && updateGenreDto.name !== genre.name) {
+      const existingGenre = await this.genreRepository.findOne({
+        where: { name: updateGenreDto.name },
+      });
+      if (existingGenre && existingGenre.id !== genre.id) {
+        throw new ConflictException('Genre with this name already exists');
+      }
+      genre.name = updateGenreDto.name;
+      genre.slug = generateUniqueSlug(updateGenreDto.name, {
+        addRandom: false,
+      });
+    }
+
+    if (updateGenreDto.description !== undefined) {
+      genre.description = updateGenreDto.description;
+    }
 
     return this.genreRepository.save(genre);
   }
 
-  async update(id: number, updateGenreDto: UpdateGenreDto): Promise<GenreEntity> {
-    const genre = await this.findOne(id);
-
-    const dataToUpdate = { ...updateGenreDto };
-
-    if (dataToUpdate.name && !dataToUpdate.slug) {
-      dataToUpdate.slug = this.generateSlug(dataToUpdate.name);
-    }
-
-    const updatedGenre = {
-      ...genre,
-      ...dataToUpdate,
-    };
-
-    return this.genreRepository.save(updatedGenre);
-  }
-
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<GenreEntity> {
     const genre = await this.findOne(id);
 
     await this.genreRepository.remove(genre);
+
+    return genre;
   }
 
-  private generateSlug(name: string): string {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-') 
-      .replace(/-+/g, '-') 
-      .replace(/^-+|-+$/g, '') 
-      .trim();
+  async findGenresById(genresIDs: number[]): Promise<GenreEntity[]> {
+    return this.genreRepository.find({
+      where: { id: In(genresIDs) },
+    });
   }
 }

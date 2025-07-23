@@ -27,4 +27,4 @@ export class GenreEntity extends BaseEntity {
   })
   @Column({ type: 'text', nullable: true })
   description: string;
-} 
+}

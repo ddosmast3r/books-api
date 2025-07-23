@@ -2,11 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 import { AuthorEntity } from './author.entity';
-import slugify from 'slugify';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { FilterAuthorsDto } from './dto/filter-authors.dto';
-
+import { AuthorsSortByEnum } from './authors.enum';
+import { generateUniqueSlug } from '../common/utilities/slug.generator';
 
 @Injectable()
 export class AuthorsService {
@@ -17,7 +17,7 @@ export class AuthorsService {
 
   async create(createAuthorDto: CreateAuthorDto): Promise<AuthorEntity> {
     const fullName = this.generateFullName(createAuthorDto);
-    const slug = this.generateSlug(fullName);
+    const slug = generateUniqueSlug(fullName);
 
     const author = this.authorRepository.create({
       firstName: createAuthorDto.firstName,
@@ -36,7 +36,7 @@ export class AuthorsService {
       page = 1,
       limit = 10,
       search,
-      sortBy = 'createdAt',
+      sortBy = AuthorsSortByEnum.CreatedAt,
       order = 'desc',
     } = filterAuthorsDto;
 
@@ -48,7 +48,10 @@ export class AuthorsService {
       });
     }
 
-    const sortField = sortBy === 'name' ? 'author.fullName' : `author.${sortBy}`;
+    const sortField =
+      sortBy === AuthorsSortByEnum.Name
+        ? 'author.fullName'
+        : `author.${sortBy}`;
     queryBuilder.orderBy(sortField, order.toUpperCase() as 'ASC' | 'DESC');
 
     queryBuilder.skip((page - 1) * limit);
@@ -65,6 +68,12 @@ export class AuthorsService {
     };
   }
 
+  async findAuthorsById(authorIDs: number[]): Promise<AuthorEntity[]> {
+    return this.authorRepository.find({
+      where: { id: In(authorIDs) },
+    });
+  }
+
   async findOne(id: number) {
     const author = await this.authorRepository.findOne({ where: { id } });
 
@@ -75,7 +84,10 @@ export class AuthorsService {
     return author;
   }
 
-  async update(id: number, updateAuthorDto: UpdateAuthorDto): Promise<AuthorEntity> {
+  async update(
+    id: number,
+    updateAuthorDto: UpdateAuthorDto,
+  ): Promise<AuthorEntity> {
     const author = await this.authorRepository.preload({
       id,
       ...updateAuthorDto,
@@ -93,7 +105,7 @@ export class AuthorsService {
       ].some((value) => value !== undefined)
     ) {
       author.fullName = this.generateFullName(author);
-      author.slug = this.generateSlug(author.fullName);
+      author.slug = generateUniqueSlug(author.fullName);
     }
 
     return this.authorRepository.save(author);
@@ -114,9 +126,5 @@ export class AuthorsService {
     return `${authorData.firstName} ${
       authorData.middleName ? authorData.middleName + ' ' : ''
     }${authorData.lastName}`;
-  }
-
-  private generateSlug(fullName: string): string {
-    return slugify(fullName, { lower: true });
   }
 }

@@ -1,5 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
+import { ISO6391LanguageCodes } from '../../common/ISO639-1';
+
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsArray,
+  IsIn,
+  Length,
+  IsDate,
+  IsInt,
+} from 'class-validator';
 
 export class CreateBookDto {
   @ApiProperty({
@@ -11,12 +23,13 @@ export class CreateBookDto {
   title: string;
 
   @ApiProperty({
-    description: 'Author',
-    example: 'God',
+    description: 'Array of Author IDs',
+    example: [1],
   })
   @IsNotEmpty()
-  @IsString()
-  author: string;
+  @IsArray()
+  @IsInt({ each: true })
+  authorIds: number[];
 
   @ApiProperty({
     description: 'Book description',
@@ -28,32 +41,44 @@ export class CreateBookDto {
   description: string;
 
   @ApiProperty({
-    description: 'Published date',
+    description: 'Published date "YYYY-MM-DD"',
     example: '2024-12-25',
   })
-  @IsNotEmpty()
   @IsOptional()
-  @IsString()
+  @IsDate()
   publishedDate: Date;
 
   @ApiProperty({
-    description: 'The language in which the book is written',
-    example: 'English',
+    description: 'Language of the book, only in iso 639-1 format',
+    example: 'ru',
   })
-  @IsNotEmpty()
   @IsOptional()
   @IsString()
-  langue: string;
+  @IsIn(ISO6391LanguageCodes)
+  @Length(2, 2)
+  language: string;
 
   @ApiProperty({
     description: 'Number of pages in the book',
     example: '350',
   })
-  @IsNotEmpty()
   @IsOptional()
   @IsNumber()
   pages: number;
 
+  @ApiProperty({
+    description: 'Array of Genre IDs',
+    example: [1],
+  })
+  @IsArray()
+  @IsInt({ each: true })
+  genreIds: number[];
+
+  @ApiProperty({
+    description: 'Limit of pages in the book',
+    example: '350',
+  })
+  @IsOptional()
   @IsNumber()
-  genres: string[];
+  limit: number;
 }
