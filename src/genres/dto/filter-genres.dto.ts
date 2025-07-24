@@ -7,6 +7,7 @@ import {
   IsIn,
   Min,
   Max,
+  IsInt,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 
@@ -38,6 +39,7 @@ export class FilterGenresDto {
     default: 'desc',
   })
   @IsOptional()
+  @IsString()
   @IsIn(['asc', 'desc'])
   order?: string = 'desc';
 
@@ -50,7 +52,7 @@ export class FilterGenresDto {
   })
   @IsOptional()
   @Transform(({ value }) => parseInt(value))
-  @IsNumber()
+  @IsInt()
   @Min(1)
   @Max(100)
   limit?: number = 10;
@@ -63,7 +65,7 @@ export class FilterGenresDto {
   })
   @IsOptional()
   @Transform(({ value }) => parseInt(value))
-  @IsNumber()
+  @IsInt()
   @Min(1)
   page?: number = 1;
 }
