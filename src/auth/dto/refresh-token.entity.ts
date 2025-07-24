@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { UserEntity } from 'src/users/user.entity';
+import { UserEntity } from '../../users/user.entity';
 import { IsDate, IsInt, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
