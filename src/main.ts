@@ -9,6 +9,9 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
       whitelist: true,
       forbidNonWhitelisted: true,
     }),
@@ -18,7 +21,14 @@ async function bootstrap() {
     .setTitle('Books API')
     .setDescription('API for books')
     .setVersion('1.0')
-    .addTag('books')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'JWT',
+      description: 'Enter JWT token',
+      in: 'header',
+    }, 'access-token')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

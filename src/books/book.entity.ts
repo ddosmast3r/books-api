@@ -11,20 +11,15 @@ import { AuthorEntity } from '../authors/author.entity';
 
 @Entity('books')
 export class BookEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
   @Column()
   title: string;
 
-  @ManyToMany(() => GenreEntity, (genre: GenreEntity): string => genre.name)
+  @ManyToMany(() => GenreEntity, (genres: GenreEntity): number => genres.id)
   @JoinTable()
   genres: GenreEntity[];
 
-  @ManyToMany(
-    () => AuthorEntity,
-    (authors: AuthorEntity): string => authors.fullName,
-  )
+  @ManyToMany(() => AuthorEntity, (authors: AuthorEntity): number => authors.id)
   @JoinTable()
-  @Column()
   authors: AuthorEntity[];
 
   @Column()
@@ -33,9 +28,12 @@ export class BookEntity extends BaseEntity {
   @Column()
   publicationDate: Date;
 
-  @Column()
+  @Column({ type: 'varchar', length: 2 })
   language: string;
 
   @Column()
   pages: number;
+
+  @Column()
+  slug: string;
 }

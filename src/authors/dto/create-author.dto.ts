@@ -25,6 +25,7 @@ export class CreateAuthorDto {
   @IsString()
   @IsOptional()
   middleName?: string;
+
   @ApiProperty({
     description: 'The bio of the author',
     example: 'John Doe is a software engineer',

@@ -23,15 +23,6 @@ export class FilterGenresDto {
   search?: string;
 
   @ApiPropertyOptional({
-    description: 'Filter by exact slug match',
-    required: false,
-    example: 'science-fiction',
-  })
-  @IsOptional()
-  @IsString()
-  slug?: string;
-
-  @ApiPropertyOptional({
     description: 'Sort by field',
     required: false,
     enum: ['name', 'createdAt', 'updatedAt'],
