@@ -9,6 +9,7 @@ import {
   UseGuards,
   Query,
   ParseIntPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -24,9 +25,11 @@ import {
 import { BookEntity } from './book.entity';
 import { FilterBookDto } from './dto/filter-book.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 
 @Controller('books')
 @ApiTags('books')
+@UseInterceptors(CacheInterceptor)
 @ApiBearerAuth('access-token')
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
@@ -64,6 +67,8 @@ export class BooksController {
     status: 401,
     description: 'Unauthorized',
   })
+  @CacheKey('all-books')
+  @CacheTTL(300)
   @Get()
   findAll(@Query() filterBookDto: FilterBookDto) {
     return this.booksService.findAll(filterBookDto);
@@ -85,6 +90,8 @@ export class BooksController {
     status: 401,
     description: 'Unauthorized',
   })
+  @CacheKey('book-details')
+  @CacheTTL(600)
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.booksService.findOne(id);

@@ -9,9 +9,17 @@ import { TypeOrmConfigService } from './config/typeorm-config.service';
 import { GenresModule } from './genres/genres.module';
 import { AuthorsModule } from './authors/authors.module';
 import { BooksModule } from './books/books.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
+    CacheModule.register({
+      store: redisStore,
+      host: 'redis',
+      port: 6379,
+      ttl: 60,
+    }),
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,

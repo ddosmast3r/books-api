@@ -10,6 +10,7 @@ import {
   HttpStatus,
   UseGuards,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -27,9 +28,11 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FilterGenresDto } from './dto/filter-genres.dto';
 import { PaginatedGenresDto } from './dto/paginated-genres.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Genres')
 @Controller('genres')
+@UseInterceptors(CacheInterceptor)
 @ApiBearerAuth('access-token')
 export class GenresController {
   constructor(private readonly genresService: GenresService) {}
@@ -40,6 +43,8 @@ export class GenresController {
     description: 'List of all genres',
     type: PaginatedGenresDto,
   })
+  @CacheKey('all-genres')
+  @CacheTTL(300)
   @Get()
   findAll(
     @Query() filterGenresDto: FilterGenresDto,

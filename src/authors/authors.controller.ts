@@ -9,6 +9,7 @@ import {
   UseGuards,
   ParseIntPipe,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthorsService } from './authors.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
@@ -18,8 +19,11 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FilterAuthorsDto } from './dto/filter-authors.dto';
 import { AuthorEntity } from './author.entity';
 import { PaginatedAuthorsDto } from './dto/paginated-authors.dto';
+import { CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('authors')
+@UseInterceptors(CacheInterceptor)
 @ApiTags('Authors')
 @ApiBearerAuth('access-token')
 export class AuthorsController {
@@ -45,6 +49,8 @@ export class AuthorsController {
     description: 'List of authors with pagination.',
     type: PaginatedAuthorsDto,
   })
+  @CacheKey('all-authors')
+  @CacheTTL(300)
   @Get()
   findAll(@Query() filterAuthorsDto: FilterAuthorsDto) {
     return this.authorsService.findAll(filterAuthorsDto);
